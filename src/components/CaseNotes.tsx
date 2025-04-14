@@ -33,7 +33,7 @@ export function CaseNotes() {
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="text-xs tracking-wider font-bold text-zinc-500">
-            DETECTIVE'S NOTES
+            DETECTIVE&rsquo;S NOTES
           </div>
           <button className="bg-zinc-800 p-1 rounded hover:bg-zinc-700">
             <FileText size={16} />
