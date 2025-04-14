@@ -11,7 +11,7 @@ import { NotesView } from "./NotesView";
 interface MainContentProps {
   selectedTab: string;
   setSelectedTab: (tab: string) => void;
-  selectedPerson: Person;
+  selectedPerson: Person | null;
   selectedEvidence: Evidence | null;
   selectedLocation: Location | null;
 }
@@ -20,7 +20,7 @@ export function MainContent({ selectedTab, setSelectedTab, selectedPerson, selec
   return (
     <div className="flex-1 flex flex-col bg-zinc-900">
       <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-      {selectedTab === "interview" && <InterviewSection person={selectedPerson} />}
+      {selectedTab === "interview" && selectedPerson && <InterviewSection person={selectedPerson} />}
       {selectedTab === "evidence" && <EvidenceView evidence={selectedEvidence} />}
       {selectedTab === "locations" && <LocationView location={selectedLocation} />}
       {selectedTab === "notes" && <NotesView />}

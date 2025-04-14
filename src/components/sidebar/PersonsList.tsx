@@ -7,33 +7,15 @@ export interface Person {
   trust?: string;
 }
 
-const persons: Person[] = [
-  { 
-    name: "Sarah Reynolds", 
-    role: "Victim's Sister",
-    mood: "Cooperative",
-    trust: "Medium"
-  },
-  { 
-    name: "Marcus Chen", 
-    role: "Business Partner",
-    mood: "Defensive",
-    trust: "Low"
-  },
-  { 
-    name: "Diana Wilkins", 
-    role: "Neighbor",
-    mood: "Nervous",
-    trust: "High"
-  },
-];
+
 
 interface PersonsListProps {
+  persons: Person[];
   selectedPerson: string;
   onSelectPerson: (person: Person) => void;
 }
 
-export function PersonsList({ selectedPerson, onSelectPerson }: PersonsListProps) {
+export function PersonsList({ persons, selectedPerson, onSelectPerson }: PersonsListProps) {
   return (
     <div className="mb-6">
       <div className="mb-2 text-xs tracking-wider font-bold text-zinc-500 border-b border-zinc-800 pb-1">

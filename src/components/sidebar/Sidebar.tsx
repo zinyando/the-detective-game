@@ -10,15 +10,18 @@ import { Location } from "./LocationsList";
 interface SidebarProps {
   showSidebar: boolean;
   selectedTab: string;
+  persons: Person[];
   selectedPerson: string;
   onSelectPerson: (person: Person) => void;
+  evidence: Evidence[];
   selectedEvidence: string | undefined;
   onSelectEvidence: (evidence: Evidence) => void;
+  locations: Location[];
   selectedLocation: string | undefined;
   onSelectLocation: (location: Location) => void;
 }
 
-export function Sidebar({ showSidebar, selectedTab, selectedPerson, onSelectPerson, selectedEvidence, onSelectEvidence, selectedLocation, onSelectLocation }: SidebarProps) {
+export function Sidebar({ showSidebar, selectedTab, persons, selectedPerson, onSelectPerson, evidence, selectedEvidence, onSelectEvidence, locations, selectedLocation, onSelectLocation }: SidebarProps) {
   if (!showSidebar) return null;
 
   return (
@@ -26,13 +29,25 @@ export function Sidebar({ showSidebar, selectedTab, selectedPerson, onSelectPers
       <SearchBar />
       <div className="flex-1 overflow-y-auto px-4">
         {selectedTab === "interview" && (
-          <PersonsList selectedPerson={selectedPerson} onSelectPerson={onSelectPerson} />
+          <PersonsList 
+            persons={persons}
+            selectedPerson={selectedPerson} 
+            onSelectPerson={onSelectPerson} 
+          />
         )}
         {selectedTab === "evidence" && (
-          <EvidenceList selectedEvidence={selectedEvidence} onSelectEvidence={onSelectEvidence} />
+          <EvidenceList 
+            evidence={evidence}
+            selectedEvidence={selectedEvidence} 
+            onSelectEvidence={onSelectEvidence} 
+          />
         )}
         {selectedTab === "locations" && (
-          <LocationsList selectedLocation={selectedLocation} onSelectLocation={onSelectLocation} />
+          <LocationsList 
+            locations={locations}
+            selectedLocation={selectedLocation} 
+            onSelectLocation={onSelectLocation} 
+          />
         )}
       </div>
     </div>

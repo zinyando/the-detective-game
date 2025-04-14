@@ -7,46 +7,22 @@ export interface Evidence {
   location: string;
 }
 
-const evidenceItems: Evidence[] = [
-  {
-    id: "security-footage",
-    title: "Security Footage",
-    description: "Parkade Camera #3",
-    details: "Footage shows an unidentified figure entering the building at 10:45 PM. The figure appears to be of similar build to the victim&apos;s business partner.",
-    dateFound: "April 17, 2025",
-    location: "Riverside Corporate Center"
-  },
-  {
-    id: "threatening-email",
-    title: "Threatening Email",
-    description: "Sent 3 days before murder",
-    details: "Email contains explicit threats regarding a business dispute. IP address traced to a local coffee shop frequented by Marcus Chen.",
-    dateFound: "April 16, 2025",
-    location: "Victim&apos;s Laptop"
-  },
-  {
-    id: "phone-records",
-    title: "Phone Records",
-    description: "Call logs from victim&apos;s phone",
-    details: "Multiple calls between victim and Marcus Chen on the night of the murder. Last call at 9:30 PM lasted 45 seconds.",
-    dateFound: "April 18, 2025",
-    location: "Phone Company Records"
-  },
-];
+
 
 interface EvidenceListProps {
+  evidence: Evidence[];
   selectedEvidence: string | undefined;
   onSelectEvidence: (evidence: Evidence) => void;
 }
 
-export function EvidenceList({ selectedEvidence, onSelectEvidence }: EvidenceListProps) {
+export function EvidenceList({ evidence, selectedEvidence, onSelectEvidence }: EvidenceListProps) {
   return (
     <div className="mb-6">
       <div className="mb-2 text-xs tracking-wider font-bold text-zinc-500 border-b border-zinc-800 pb-1">
         KEY EVIDENCE
       </div>
       <div className="space-y-1 text-sm">
-        {evidenceItems.map((item) => (
+        {evidence.map((item) => (
           <div
             key={item.id}
             onClick={() => onSelectEvidence(item)}
