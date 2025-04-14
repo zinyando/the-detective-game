@@ -5,6 +5,7 @@ import { LocationsList } from "./LocationsList";
 
 import { Person } from "./PersonsList";
 import { Evidence } from "./EvidenceList";
+import { Location } from "./LocationsList";
 
 interface SidebarProps {
   showSidebar: boolean;
@@ -12,9 +13,11 @@ interface SidebarProps {
   onSelectPerson: (person: Person) => void;
   selectedEvidence: string | undefined;
   onSelectEvidence: (evidence: Evidence) => void;
+  selectedLocation: string | undefined;
+  onSelectLocation: (location: Location) => void;
 }
 
-export function Sidebar({ showSidebar, selectedPerson, onSelectPerson, selectedEvidence, onSelectEvidence }: SidebarProps) {
+export function Sidebar({ showSidebar, selectedPerson, onSelectPerson, selectedEvidence, onSelectEvidence, selectedLocation, onSelectLocation }: SidebarProps) {
   if (!showSidebar) return null;
 
   return (
@@ -23,7 +26,7 @@ export function Sidebar({ showSidebar, selectedPerson, onSelectPerson, selectedE
       <div className="flex-1 overflow-y-auto px-4">
         <PersonsList selectedPerson={selectedPerson} onSelectPerson={onSelectPerson} />
         <EvidenceList selectedEvidence={selectedEvidence} onSelectEvidence={onSelectEvidence} />
-        <LocationsList />
+        <LocationsList selectedLocation={selectedLocation} onSelectLocation={onSelectLocation} />
       </div>
     </div>
   );

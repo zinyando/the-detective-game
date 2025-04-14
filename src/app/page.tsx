@@ -7,11 +7,13 @@ import { MainContent } from "../components/main/MainContent";
 import { CaseNotes } from "../components/CaseNotes";
 import { Person } from "../components/sidebar/PersonsList";
 import { Evidence } from "../components/sidebar/EvidenceList";
+import { Location } from "../components/sidebar/LocationsList";
 
 export default function ModernNoirUI() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [selectedTab, setSelectedTab] = useState("interview");
   const [selectedEvidence, setSelectedEvidence] = useState<Evidence | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<Person>({
     name: "Marcus Chen",
     role: "Business Partner",
@@ -29,6 +31,8 @@ export default function ModernNoirUI() {
           onSelectPerson={setSelectedPerson}
           selectedEvidence={selectedEvidence?.id}
           onSelectEvidence={setSelectedEvidence}
+          selectedLocation={selectedLocation?.id}
+          onSelectLocation={setSelectedLocation}
         />
 
         <MainContent 
@@ -36,6 +40,7 @@ export default function ModernNoirUI() {
           setSelectedTab={setSelectedTab}
           selectedPerson={selectedPerson}
           selectedEvidence={selectedEvidence}
+          selectedLocation={selectedLocation}
         />
 
         <CaseNotes />
