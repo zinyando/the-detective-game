@@ -15,6 +15,22 @@ import { fetchPersons, fetchEvidence, fetchLocations } from "../services/gameSer
 export default function ModernNoirUI() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [selectedTab, setSelectedTab] = useState("interview");
+
+  const handleTabChange = (tab: string) => {
+    setSelectedTab(tab);
+    // Select first item in the respective list when switching tabs
+    switch (tab) {
+      case "evidence":
+        if (evidence.length > 0) setSelectedEvidence(evidence[0]);
+        break;
+      case "locations":
+        if (locations.length > 0) setSelectedLocation(locations[0]);
+        break;
+      case "interview":
+        if (persons.length > 0) setSelectedPerson(persons[0]);
+        break;
+    }
+  };
   
   const [persons, setPersons] = useState<Person[]>([]);
   const [evidence, setEvidence] = useState<Evidence[]>([]);
@@ -66,7 +82,7 @@ export default function ModernNoirUI() {
 
         <MainContent 
           selectedTab={selectedTab} 
-          setSelectedTab={setSelectedTab}
+          setSelectedTab={handleTabChange}
           selectedPerson={selectedPerson}
           selectedEvidence={selectedEvidence}
           selectedLocation={selectedLocation}
