@@ -27,6 +27,7 @@ export default function ModernNoirUI() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar 
           showSidebar={showSidebar}
+          selectedTab={selectedTab}
           selectedPerson={selectedPerson.name}
           onSelectPerson={setSelectedPerson}
           selectedEvidence={selectedEvidence?.id}
