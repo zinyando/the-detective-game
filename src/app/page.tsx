@@ -6,10 +6,12 @@ import { Sidebar } from "../components/sidebar/Sidebar";
 import { MainContent } from "../components/main/MainContent";
 import { CaseNotes } from "../components/CaseNotes";
 import { Person } from "../components/sidebar/PersonsList";
+import { Evidence } from "../components/sidebar/EvidenceList";
 
 export default function ModernNoirUI() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [selectedTab, setSelectedTab] = useState("interview");
+  const [selectedEvidence, setSelectedEvidence] = useState<Evidence | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<Person>({
     name: "Marcus Chen",
     role: "Business Partner",
@@ -25,12 +27,15 @@ export default function ModernNoirUI() {
           showSidebar={showSidebar}
           selectedPerson={selectedPerson.name}
           onSelectPerson={setSelectedPerson}
+          selectedEvidence={selectedEvidence?.id}
+          onSelectEvidence={setSelectedEvidence}
         />
 
         <MainContent 
           selectedTab={selectedTab} 
           setSelectedTab={setSelectedTab}
           selectedPerson={selectedPerson}
+          selectedEvidence={selectedEvidence}
         />
 
         <CaseNotes />
