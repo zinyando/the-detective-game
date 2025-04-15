@@ -83,7 +83,6 @@ export default function ModernNoirUI() {
         <MainContent 
           selectedTab={selectedTab} 
           setSelectedTab={handleTabChange}
-          selectedPerson={selectedPerson}
           selectedEvidence={selectedEvidence}
           selectedLocation={selectedLocation}
         />

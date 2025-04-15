@@ -10,11 +10,21 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.11",
+    "@assistant-ui/react": "^0.9.1",
+    "@assistant-ui/react-ai-sdk": "^0.9.1",
+    "@assistant-ui/react-markdown": "^0.9.1",
     "@mastra/core": "^0.8.2",
+    "@radix-ui/react-slot": "^1.2.0",
+    "@radix-ui/react-tooltip": "^1.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "lucide-react": "^0.488.0",
     "next": "15.3.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "remark-gfm": "^4.0.1",
+    "tailwind-merge": "^3.2.0",
+    "tw-animate-css": "^1.2.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
