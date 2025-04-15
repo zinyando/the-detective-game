@@ -19,18 +19,21 @@ interface GameData {
 export const gameData: GameData = {
   persons: [
     {
+      id: "sarah-reynolds",
       name: "Sarah Reynolds",
       role: "Victim&apos;s Sister",
       mood: "Cooperative",
       trust: "Medium"
     },
     {
+      id: "marcus-chen",
       name: "Marcus Chen",
       role: "Business Partner",
       mood: "Defensive",
       trust: "Low"
     },
     {
+      id: "diana-wilkins",
       name: "Diana Wilkins",
       role: "Neighbor",
       mood: "Nervous",
