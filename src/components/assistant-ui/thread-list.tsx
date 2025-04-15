@@ -1,66 +1,72 @@
 import type { FC } from "react";
-import {
-  ThreadListItemPrimitive,
-  ThreadListPrimitive,
-} from "@assistant-ui/react";
-import { ArchiveIcon, PlusIcon } from "lucide-react";
+import { Person } from "../sidebar/PersonsList";
 
-import { Button } from "@/components/ui/button";
-import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
+interface ThreadListProps {
+  persons: Person[];
+  selectedPerson: string;
+  onSelectPerson: (person: Person) => void;
+}
 
-export const ThreadList: FC = () => {
+export const ThreadList: FC<ThreadListProps> = ({ persons, selectedPerson, onSelectPerson }) => {
   return (
-    <ThreadListPrimitive.Root className="flex flex-col items-stretch gap-1.5">
-      <ThreadListNew />
-      <ThreadListItems />
-    </ThreadListPrimitive.Root>
+    <div className="mb-6">
+      <div className="mb-2 text-xs tracking-wider font-bold text-zinc-500 border-b border-zinc-800 pb-1">
+        PERSONS OF INTEREST
+      </div>
+      <div className="space-y-1">
+        <ThreadListItems 
+          persons={persons}
+          selectedPerson={selectedPerson}
+          onSelectPerson={onSelectPerson}
+        />
+      </div>
+    </div>
   );
 };
 
-const ThreadListNew: FC = () => {
+const ThreadListItems: FC<ThreadListProps> = ({ persons, selectedPerson, onSelectPerson }) => {
   return (
-    <ThreadListPrimitive.New asChild>
-      <Button className="data-[active]:bg-muted hover:bg-muted flex items-center justify-start gap-1 rounded-lg px-2.5 py-2 text-start" variant="ghost">
-        <PlusIcon />
-        New Thread
-      </Button>
-    </ThreadListPrimitive.New>
+    <div>
+      {persons.map((person) => (
+        <ThreadListItem
+          key={person.id}
+          person={person}
+          isSelected={person.id === selectedPerson}
+          onSelect={() => onSelectPerson(person)}
+        />
+      ))}
+    </div>
   );
 };
 
-const ThreadListItems: FC = () => {
-  return <ThreadListPrimitive.Items components={{ ThreadListItem }} />;
-};
+interface ThreadListItemProps {
+  person: Person;
+  isSelected: boolean;
+  onSelect: () => void;
+}
 
-const ThreadListItem: FC = () => {
+const ThreadListItem: FC<ThreadListItemProps> = ({ person, isSelected, onSelect }) => {
   return (
-    <ThreadListItemPrimitive.Root className="data-[active]:bg-muted hover:bg-muted focus-visible:bg-muted focus-visible:ring-ring flex items-center gap-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2">
-      <ThreadListItemPrimitive.Trigger className="flex-grow px-3 py-2 text-start">
-        <ThreadListItemTitle />
-      </ThreadListItemPrimitive.Trigger>
-      <ThreadListItemArchive />
-    </ThreadListItemPrimitive.Root>
+    <button
+      onClick={onSelect}
+      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-left hover:bg-zinc-800 ${isSelected ? 'bg-zinc-800' : ''}`}
+    >
+      <div className="flex-1">
+        <ThreadListItemTitle name={person.name} />
+        {person.role && (
+          <p className="text-xs text-zinc-500">{person.role}</p>
+        )}
+      </div>
+    </button>
   );
 };
 
-const ThreadListItemTitle: FC = () => {
+const ThreadListItemTitle: FC<{ name: string }> = ({ name }) => {
   return (
-    <p className="text-sm">
-      <ThreadListItemPrimitive.Title fallback="New Chat" />
+    <p className="text-sm text-zinc-300 font-medium">
+      {name}
     </p>
   );
 };
 
-const ThreadListItemArchive: FC = () => {
-  return (
-    <ThreadListItemPrimitive.Archive asChild>
-      <TooltipIconButton
-        className="hover:text-primary text-foreground ml-auto mr-3 size-4 p-0"
-        variant="ghost"
-        tooltip="Archive thread"
-      >
-        <ArchiveIcon />
-      </TooltipIconButton>
-    </ThreadListItemPrimitive.Archive>
-  );
-};
+

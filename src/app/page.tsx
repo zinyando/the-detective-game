@@ -1,7 +1,6 @@
 "use client";
 
-"use client";
-
+import { AssistantRuntimeProvider } from "@assistant-ui/react";
 import { useEffect, useState } from "react";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/sidebar/Sidebar";
@@ -10,7 +9,12 @@ import { CaseNotes } from "../components/CaseNotes";
 import { Person } from "../components/sidebar/PersonsList";
 import { Evidence } from "../components/sidebar/EvidenceList";
 import { Location } from "../components/sidebar/LocationsList";
-import { fetchPersons, fetchEvidence, fetchLocations } from "../services/gameService";
+import {
+  fetchPersons,
+  fetchEvidence,
+  fetchLocations,
+} from "../services/gameService";
+import { useChatRuntime } from "@assistant-ui/react-ai-sdk";
 
 export default function ModernNoirUI() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -31,13 +35,17 @@ export default function ModernNoirUI() {
         break;
     }
   };
-  
+
   const [persons, setPersons] = useState<Person[]>([]);
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
-  
-  const [selectedEvidence, setSelectedEvidence] = useState<Evidence | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+
+  const [selectedEvidence, setSelectedEvidence] = useState<Evidence | null>(
+    null
+  );
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null
+  );
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   useEffect(() => {
@@ -45,7 +53,7 @@ export default function ModernNoirUI() {
       const [personsData, evidenceData, locationsData] = await Promise.all([
         fetchPersons(),
         fetchEvidence(),
-        fetchLocations()
+        fetchLocations(),
       ]);
 
       setPersons(personsData);
@@ -61,34 +69,39 @@ export default function ModernNoirUI() {
     loadData();
   }, []);
 
+  const runtime = useChatRuntime({
+    api: "/api/chat",
+  });
 
   return (
-    <div className="flex flex-col h-screen bg-zinc-900 text-zinc-300 font-sans">
-      <Header showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar 
-          showSidebar={showSidebar}
-          selectedTab={selectedTab}
-          persons={persons}
-          selectedPerson={selectedPerson?.name || ""}
-          onSelectPerson={setSelectedPerson}
-          evidence={evidence}
-          selectedEvidence={selectedEvidence?.id}
-          onSelectEvidence={setSelectedEvidence}
-          locations={locations}
-          selectedLocation={selectedLocation?.id}
-          onSelectLocation={setSelectedLocation}
-        />
+    <AssistantRuntimeProvider runtime={runtime}>
+      <div className="flex flex-col h-screen bg-zinc-900 text-zinc-300 font-sans">
+        <Header showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar
+            showSidebar={showSidebar}
+            selectedTab={selectedTab}
+            persons={persons}
+            selectedPerson={selectedPerson?.name || ""}
+            onSelectPerson={setSelectedPerson}
+            evidence={evidence}
+            selectedEvidence={selectedEvidence?.id}
+            onSelectEvidence={setSelectedEvidence}
+            locations={locations}
+            selectedLocation={selectedLocation?.id}
+            onSelectLocation={setSelectedLocation}
+          />
 
-        <MainContent 
-          selectedTab={selectedTab} 
-          setSelectedTab={handleTabChange}
-          selectedEvidence={selectedEvidence}
-          selectedLocation={selectedLocation}
-        />
+          <MainContent
+            selectedTab={selectedTab}
+            setSelectedTab={handleTabChange}
+            selectedEvidence={selectedEvidence}
+            selectedLocation={selectedLocation}
+          />
 
-        <CaseNotes />
+          <CaseNotes />
+        </div>
       </div>
-    </div>
+    </AssistantRuntimeProvider>
   );
 }

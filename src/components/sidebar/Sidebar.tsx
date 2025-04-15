@@ -1,7 +1,7 @@
 import { SearchBar } from "./SearchBar";
-import { PersonsList } from "./PersonsList";
 import { EvidenceList } from "./EvidenceList";
 import { LocationsList } from "./LocationsList";
+import { ThreadList } from "../assistant-ui/thread-list";
 
 import { Person } from "./PersonsList";
 import { Evidence } from "./EvidenceList";
@@ -29,10 +29,10 @@ export function Sidebar({ showSidebar, selectedTab, persons, selectedPerson, onS
       <SearchBar />
       <div className="flex-1 overflow-y-auto px-4">
         {selectedTab === "interview" && (
-          <PersonsList 
+          <ThreadList
             persons={persons}
-            selectedPerson={selectedPerson} 
-            onSelectPerson={onSelectPerson} 
+            selectedPerson={selectedPerson}
+            onSelectPerson={onSelectPerson}
           />
         )}
         {selectedTab === "evidence" && (

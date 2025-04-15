@@ -1,6 +1,7 @@
 import { User } from "lucide-react";
 
 export interface Person {
+  id: string;
   name: string;
   role: string;
   mood?: string;
