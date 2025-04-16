@@ -7,11 +7,14 @@ import { EvidenceView } from "./EvidenceView";
 import { LocationView } from "./LocationView";
 import { NotesView } from "./NotesView";
 
+import { Person } from "../sidebar/PersonsList";
+
 interface MainContentProps {
   selectedTab: string;
   setSelectedTab: (tab: string) => void;
   selectedEvidence: Evidence | null;
   selectedLocation: Location | null;
+  selectedPerson: Person | null;
 }
 
 export function MainContent({
@@ -19,11 +22,12 @@ export function MainContent({
   setSelectedTab,
   selectedEvidence,
   selectedLocation,
+  selectedPerson,
 }: MainContentProps) {
   return (
     <div className="flex-1 flex flex-col bg-zinc-900">
       <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-      {selectedTab === "interview" && <InterviewSection />}
+      {selectedTab === "interview" && <InterviewSection selectedPerson={selectedPerson} />}
       {selectedTab === "evidence" && (
         <EvidenceView evidence={selectedEvidence} />
       )}

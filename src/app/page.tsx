@@ -164,6 +164,7 @@ export default function ModernNoirUI() {
             setSelectedTab={handleTabChange}
             selectedEvidence={selectedEvidence}
             selectedLocation={selectedLocation}
+            selectedPerson={selectedPerson}
           />
 
           <CaseNotes />

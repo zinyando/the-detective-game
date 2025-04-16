@@ -22,7 +22,20 @@ import { Button } from "@/components/ui/button";
 import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 
-export const Thread: FC = () => {
+import { Person } from "../sidebar/PersonsList";
+import { useEffect } from "react";
+
+interface ThreadProps {
+  person: Person | null;
+}
+
+export const Thread: FC<ThreadProps> = ({ person }) => {
+  useEffect(() => {
+    if (person) {
+      console.log("Thread rendering for person:", person);
+    }
+  }, [person]);
+
   return (
     <ThreadPrimitive.Root
       className="bg-zinc-900 box-border flex h-full flex-col overflow-hidden"
@@ -32,7 +45,6 @@ export const Thread: FC = () => {
     >
       <ThreadPrimitive.Viewport className="flex h-full flex-col items-center overflow-y-scroll scroll-smooth bg-inherit px-4 pt-8">
         <ThreadWelcome />
-
         <ThreadPrimitive.Messages
           components={{
             UserMessage: UserMessage,
