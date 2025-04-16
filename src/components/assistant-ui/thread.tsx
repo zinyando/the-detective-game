@@ -1,35 +1,115 @@
 import {
   ActionBarPrimitive,
-  BranchPickerPrimitive,
   ComposerPrimitive,
   MessagePrimitive,
   ThreadPrimitive,
+  useThreadRuntime,
 } from "@assistant-ui/react";
 import type { FC } from "react";
-import {
-  ArrowDownIcon,
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CopyIcon,
-  PencilIcon,
-  RefreshCwIcon,
-  SendHorizontalIcon,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { SendHorizontalIcon, ArrowDownIcon, PencilIcon, CopyIcon, CheckIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 
 import { Person } from "../sidebar/PersonsList";
-import { useEffect } from "react";
+import { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
+import type { ThreadMessageLike, TextContentPart, AppendMessage } from "@assistant-ui/react";
+import { useExternalStoreRuntime } from "@assistant-ui/react";
 
 interface ThreadProps {
   person: Person | null;
 }
 
+interface GameMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export const Thread: FC<ThreadProps> = ({ person }) => {
+  const [messages, setMessages] = useState<GameMessage[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+
+  useExternalStoreRuntime<GameMessage>({
+    isRunning,
+    messages,
+    convertMessage: (message: GameMessage): ThreadMessageLike => ({
+      role: message.role,
+      content: [{ type: "text", text: message.content } as TextContentPart],
+    }),
+    onNew: async (message: AppendMessage) => {
+      console.log("[onNew] Triggered with message:", JSON.stringify(message, null, 2));
+      if (message.content[0]?.type === "text") {
+        const userText = message.content[0].text;
+        console.log("[onNew] User text:", userText);
+        const newMessage: GameMessage = {
+          role: "user",
+          content: userText,
+        };
+        setMessages(prev => {
+          const updatedMessages = [...prev, newMessage];
+          console.log("[onNew] Updated messages with user message:", JSON.stringify(updatedMessages, null, 2));
+          return updatedMessages;
+        });
+        setIsRunning(true);
+
+        // Send message to API
+        try {
+          console.log("[onNew] Sending to API:", userText);
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: userText }),
+          });
+          console.log("[onNew] API response status:", response.status);
+
+          if (!response.ok) {
+            throw new Error(`Network response was not ok (${response.status})`);
+          }
+
+          const data = await response.json();
+          console.log("[onNew] API response data:", JSON.stringify(data, null, 2));
+
+          const aiResponse: GameMessage = {
+            role: "assistant",
+            content: data?.reply || "Sorry, I couldn't get a response.",
+          };
+          setMessages(prev => {
+            const updatedMessages = [...prev, aiResponse];
+            console.log("[onNew] Updated messages with AI response:", JSON.stringify(updatedMessages, null, 2));
+            return updatedMessages;
+          });
+
+        } catch (error) {
+          console.error("[onNew] API fetch error:", error);
+          const errorResponse: GameMessage = {
+            role: "assistant",
+            content: "Sorry, something went wrong while contacting the assistant.",
+          };
+          setMessages(prev => {
+            const updatedMessages = [...prev, errorResponse];
+            console.log("[onNew] Updated messages with error response:", JSON.stringify(updatedMessages, null, 2));
+            return updatedMessages;
+          });
+        } finally {
+          setIsRunning(false);
+          console.log("[onNew] Finished processing.");
+        }
+      } else {
+        console.log("[onNew] Message content is not text, skipping processing.");
+      }
+    },
+  });
+
+  useEffect(() => {
+    // Clear messages when the person changes
+    setMessages([]);
+    // Optionally, fetch initial messages or show a welcome message
+    // For now, let's just clear the state
+  }, [person]);
+
   useEffect(() => {
     if (person) {
       console.log("Thread rendering for person:", person);
@@ -90,93 +170,118 @@ const ThreadWelcome: FC = () => {
   );
 };
 
+interface ComposerActionProps {
+  onSubmit: () => void;
+}
+
 const Composer: FC = () => {
+  const [message, setMessage] = useState("");
+  const runtime = useThreadRuntime();
+
+  const handleSubmit = () => {
+    if (!message.trim()) return;
+    runtime.append({
+      role: "user",
+      content: [{ type: "text", text: message } as TextContentPart],
+    });
+    setMessage("");
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return (
     <ComposerPrimitive.Root className="focus-within:border-amber-500/20 flex w-full flex-wrap items-end rounded-lg bg-zinc-800 px-2.5 shadow-sm transition-colors ease-in">
       <ComposerPrimitive.Input
         rows={1}
-        autoFocus
+        className="flex-1 bg-transparent p-2.5 text-sm text-zinc-200 outline-none"
         placeholder="Write a message..."
-        className="placeholder:text-zinc-500 max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm text-zinc-200 outline-none focus:ring-0 disabled:cursor-not-allowed"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
       />
-      <ComposerAction />
+      <ComposerAction onSubmit={handleSubmit} />
     </ComposerPrimitive.Root>
   );
 };
 
-const ComposerAction: FC = () => {
+const ComposerAction: FC<ComposerActionProps> = ({ onSubmit }) => {
   return (
-    <>
-      <ThreadPrimitive.If running={false}>
-        <ComposerPrimitive.Send asChild>
-          <TooltipIconButton
-            tooltip="Send"
-            variant="default"
-            className="my-2.5 size-8 p-2 transition-opacity ease-in bg-amber-500 text-zinc-900 hover:bg-amber-600"
-          >
-            <SendHorizontalIcon />
-          </TooltipIconButton>
-        </ComposerPrimitive.Send>
-      </ThreadPrimitive.If>
-      <ThreadPrimitive.If running>
-        <ComposerPrimitive.Cancel asChild>
-          <TooltipIconButton
-            tooltip="Cancel"
-            variant="default"
-            className="my-2.5 size-8 p-2 transition-opacity ease-in bg-zinc-700 text-zinc-300 hover:bg-zinc-600"
-          >
-            <CircleStopIcon />
-          </TooltipIconButton>
-        </ComposerPrimitive.Cancel>
-      </ThreadPrimitive.If>
-    </>
+    <button
+      type="submit"
+      onClick={onSubmit}
+      className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-700 text-zinc-200 hover:bg-zinc-600"
+    >
+      <SendHorizontalIcon className="h-4 w-4" />
+    </button>
   );
 };
 
 const UserMessage: FC = () => {
   return (
-    <MessagePrimitive.Root className="grid auto-rows-auto grid-cols-[minmax(72px,1fr)_auto] gap-y-2 [&:where(>*)]:col-start-2 w-full max-w-[var(--thread-max-width)] py-4">
-      <UserActionBar />
-
-      <div className="bg-zinc-900 text-zinc-300 max-w-[calc(var(--thread-max-width)*0.8)] break-words rounded-3xl px-5 py-2.5 col-start-2 row-start-2">
-        <MessagePrimitive.Content />
+    <MessagePrimitive.Root className="flex items-start gap-4 w-full max-w-[var(--thread-max-width)] py-4 flex-row-reverse">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-700 text-zinc-200">
+        U
       </div>
-
-      <BranchPicker className="col-span-full col-start-1 row-start-3 -mr-1 justify-end" />
+      <div className="flex-1 flex justify-end">
+        <div className="bg-zinc-900 text-zinc-300 max-w-[calc(var(--thread-max-width)*0.8)] break-words rounded-xl px-4 py-2">
+          <MessagePrimitive.Content />
+        </div>
+      </div>
     </MessagePrimitive.Root>
   );
 };
 
-const UserActionBar: FC = () => {
-  return (
-    <ActionBarPrimitive.Root
-      hideWhenRunning
-      autohide="not-last"
-      className="flex flex-col items-end col-start-1 row-start-2 mr-3 mt-2.5"
-    >
-      <ActionBarPrimitive.Edit asChild>
-        <TooltipIconButton tooltip="Edit">
-          <PencilIcon />
-        </TooltipIconButton>
-      </ActionBarPrimitive.Edit>
-    </ActionBarPrimitive.Root>
-  );
-};
+
 
 const EditComposer: FC = () => {
-  return (
-    <ComposerPrimitive.Root className="bg-zinc-800 my-4 flex w-full max-w-[var(--thread-max-width)] flex-col gap-2 rounded-xl">
-      <ComposerPrimitive.Input className="text-zinc-200 flex h-8 w-full resize-none bg-transparent p-4 pb-0 outline-none" />
+  const [editMessage, setEditMessage] = useState("");
 
-      <div className="mx-3 mb-3 flex items-center justify-center gap-2 self-end">
+  const handleEditSubmit = () => {
+    if (!editMessage.trim()) return;
+    // TODO: Implement edit functionality
+    setEditMessage("");
+  };
+
+  const handleEditKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleEditSubmit();
+    }
+  };
+
+  return (
+    <ComposerPrimitive.Root className="bg-zinc-800 my-4 flex w-full max-w-[var(--thread-max-width)] flex-col gap-2 rounded-xl p-4">
+      <ComposerPrimitive.Input 
+        value={editMessage}
+        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setEditMessage(e.target.value)}
+        onKeyDown={handleEditKeyDown}
+        placeholder="Edit your message..."
+        className="text-zinc-200 flex min-h-[40px] w-full resize-none bg-transparent outline-none" 
+      />
+
+      <div className="flex items-center justify-between mt-2">
         <ComposerPrimitive.Cancel asChild>
-          <Button variant="ghost" className="text-zinc-300 hover:text-zinc-100">
+          <Button 
+            variant="ghost" 
+            className="text-zinc-300 hover:text-zinc-100"
+            onClick={() => setEditMessage("")}
+          >
             Cancel
           </Button>
         </ComposerPrimitive.Cancel>
         <ComposerPrimitive.Send asChild>
-          <Button className="bg-amber-500 text-zinc-900 hover:bg-amber-600">
-            Send
+          <Button 
+            className="bg-amber-500 text-zinc-900 hover:bg-amber-600 flex items-center gap-2"
+            onClick={handleEditSubmit}
+            disabled={!editMessage.trim()}
+          >
+            Save
+            <PencilIcon className="w-4 h-4" />
           </Button>
         </ComposerPrimitive.Send>
       </div>
@@ -186,85 +291,29 @@ const EditComposer: FC = () => {
 
 const AssistantMessage: FC = () => {
   return (
-    <MessagePrimitive.Root className="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] relative w-full max-w-[var(--thread-max-width)] py-4">
-      <div className="bg-zinc-800 text-amber-500 max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-7 col-span-2 col-start-2 row-start-1 my-1.5 rounded-3xl px-5 py-2.5">
-        <MessagePrimitive.Content components={{ Text: MarkdownText }} />
+    <MessagePrimitive.Root className="flex items-start gap-4 w-full max-w-[var(--thread-max-width)] py-4">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-zinc-900">
+        D
       </div>
-
-      <AssistantActionBar />
-
-      <BranchPicker className="col-start-2 row-start-2 -ml-2 mr-2" />
+      <div className="flex-1">
+        <div className="bg-zinc-800 text-zinc-200 max-w-[calc(var(--thread-max-width)*0.8)] break-words rounded-xl px-4 py-2">
+          <MessagePrimitive.Content components={{ Text: MarkdownText }} />
+        </div>
+        <div className="mt-2 flex items-center gap-2 text-zinc-500">
+          <ActionBarPrimitive.Root hideWhenRunning autohide="not-last">
+            <ActionBarPrimitive.Copy asChild>
+              <TooltipIconButton tooltip="Copy message">
+                <MessagePrimitive.If copied={false}>
+                  <CopyIcon className="h-4 w-4" />
+                </MessagePrimitive.If>
+                <MessagePrimitive.If copied>
+                  <CheckIcon className="h-4 w-4" />
+                </MessagePrimitive.If>
+              </TooltipIconButton>
+            </ActionBarPrimitive.Copy>
+          </ActionBarPrimitive.Root>
+        </div>
+      </div>
     </MessagePrimitive.Root>
-  );
-};
-
-const AssistantActionBar: FC = () => {
-  return (
-    <ActionBarPrimitive.Root
-      hideWhenRunning
-      autohide="not-last"
-      autohideFloat="single-branch"
-      className="text-muted-foreground flex gap-1 col-start-3 row-start-2 -ml-1 data-[floating]:bg-background data-[floating]:absolute data-[floating]:rounded-md data-[floating]:border data-[floating]:p-1 data-[floating]:shadow-sm"
-    >
-      <ActionBarPrimitive.Copy asChild>
-        <TooltipIconButton tooltip="Copy">
-          <MessagePrimitive.If copied>
-            <CheckIcon />
-          </MessagePrimitive.If>
-          <MessagePrimitive.If copied={false}>
-            <CopyIcon />
-          </MessagePrimitive.If>
-        </TooltipIconButton>
-      </ActionBarPrimitive.Copy>
-      <ActionBarPrimitive.Reload asChild>
-        <TooltipIconButton tooltip="Refresh">
-          <RefreshCwIcon />
-        </TooltipIconButton>
-      </ActionBarPrimitive.Reload>
-    </ActionBarPrimitive.Root>
-  );
-};
-
-const BranchPicker: FC<BranchPickerPrimitive.Root.Props> = ({
-  className,
-  ...rest
-}) => {
-  return (
-    <BranchPickerPrimitive.Root
-      hideWhenSingleBranch
-      className={cn(
-        "text-muted-foreground inline-flex items-center text-xs",
-        className
-      )}
-      {...rest}
-    >
-      <BranchPickerPrimitive.Previous asChild>
-        <TooltipIconButton tooltip="Previous">
-          <ChevronLeftIcon />
-        </TooltipIconButton>
-      </BranchPickerPrimitive.Previous>
-      <span className="font-medium">
-        <BranchPickerPrimitive.Number /> / <BranchPickerPrimitive.Count />
-      </span>
-      <BranchPickerPrimitive.Next asChild>
-        <TooltipIconButton tooltip="Next">
-          <ChevronRightIcon />
-        </TooltipIconButton>
-      </BranchPickerPrimitive.Next>
-    </BranchPickerPrimitive.Root>
-  );
-};
-
-const CircleStopIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 16 16"
-      fill="currentColor"
-      width="16"
-      height="16"
-    >
-      <rect width="10" height="10" x="3" y="3" rx="2" />
-    </svg>
   );
 };
