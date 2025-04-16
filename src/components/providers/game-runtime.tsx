@@ -6,13 +6,21 @@ import {
   AppendMessage,
   AssistantRuntimeProvider,
 } from "@assistant-ui/react";
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, useEffect } from "react";
 
 export interface GameMessage {
   id: string;
   content: string;
   role: "user" | "assistant";
   createdAt: Date;
+}
+
+type PersonId = string;
+type AllMessagesStore = Map<PersonId, GameMessage[]>;
+
+interface GameRuntimeProviderProps {
+  children: ReactNode;
+  personId: PersonId;
 }
 
 const convertMessage = (message: GameMessage): ThreadMessageLike => {
@@ -22,9 +30,20 @@ const convertMessage = (message: GameMessage): ThreadMessageLike => {
   };
 };
 
-export function GameRuntimeProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<GameMessage[]>([]);
+export function GameRuntimeProvider({
+  children,
+  personId,
+}: GameRuntimeProviderProps) {
+  const [allMessages, setAllMessages] = useState<AllMessagesStore>(new Map());
+  const [currentThreadMessages, setCurrentThreadMessages] = useState<
+    GameMessage[]
+  >([]);
   const [isRunning, setIsRunning] = useState(false);
+
+  useEffect(() => {
+    const messagesForPerson = allMessages.get(personId) || [];
+    setCurrentThreadMessages(messagesForPerson);
+  }, [personId, allMessages]);
 
   const onNew = async (message: AppendMessage) => {
     if (message.content[0]?.type !== "text") {
@@ -39,7 +58,13 @@ export function GameRuntimeProvider({ children }: { children: ReactNode }) {
       createdAt: new Date(),
     };
 
-    setMessages((currentMessages) => [...currentMessages, newMessage]);
+    setAllMessages((prevStore) => {
+      const newStore = new Map(prevStore);
+      const currentMessages = newStore.get(personId) || [];
+      newStore.set(personId, [...currentMessages, newMessage]);
+      return newStore;
+    });
+
     setIsRunning(true);
 
     try {
@@ -58,7 +83,13 @@ export function GameRuntimeProvider({ children }: { children: ReactNode }) {
         role: "assistant",
         createdAt: new Date(),
       };
-      setMessages((currentMessages) => [...currentMessages, aiResponse]);
+
+      setAllMessages((prevStore) => {
+        const newStore = new Map(prevStore);
+        const currentMessages = newStore.get(personId) || [];
+        newStore.set(personId, [...currentMessages, aiResponse]);
+        return newStore;
+      });
     } catch (error) {
       console.error("[GameRuntimeProvider] onNew error:", error);
       const errorResponse: GameMessage = {
@@ -67,7 +98,13 @@ export function GameRuntimeProvider({ children }: { children: ReactNode }) {
         role: "assistant",
         createdAt: new Date(),
       };
-      setMessages((currentMessages) => [...currentMessages, errorResponse]);
+
+      setAllMessages((prevStore) => {
+        const newStore = new Map(prevStore);
+        const currentMessages = newStore.get(personId) || [];
+        newStore.set(personId, [...currentMessages, errorResponse]);
+        return newStore;
+      });
     } finally {
       setIsRunning(false);
     }
@@ -75,7 +112,7 @@ export function GameRuntimeProvider({ children }: { children: ReactNode }) {
 
   const runtime = useExternalStoreRuntime({
     isRunning,
-    messages,
+    messages: currentThreadMessages,
     convertMessage,
     onNew,
   });
