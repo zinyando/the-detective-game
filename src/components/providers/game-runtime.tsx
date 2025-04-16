@@ -6,7 +6,8 @@ import {
   AppendMessage,
   AssistantRuntimeProvider,
 } from "@assistant-ui/react";
-import { useState, ReactNode, useEffect } from "react";
+import { useState, ReactNode, useEffect, useCallback } from "react";
+import { useMessagesStore } from "@/store/messagesStore";
 
 export interface GameMessage {
   id: string;
@@ -16,34 +17,40 @@ export interface GameMessage {
 }
 
 type PersonId = string;
-type AllMessagesStore = Map<PersonId, GameMessage[]>;
 
 interface GameRuntimeProviderProps {
   children: ReactNode;
   personId: PersonId;
 }
-
-const convertMessage = (message: GameMessage): ThreadMessageLike => {
-  return {
-    role: message.role,
-    content: [{ type: "text", text: message.content }],
-  };
-};
+const EMPTY_MESSAGES: GameMessage[] = [];
 
 export function GameRuntimeProvider({
   children,
   personId,
 }: GameRuntimeProviderProps) {
-  const [allMessages, setAllMessages] = useState<AllMessagesStore>(new Map());
-  const [currentThreadMessages, setCurrentThreadMessages] = useState<
-    GameMessage[]
-  >([]);
-  const [isRunning, setIsRunning] = useState(false);
+  const convertMessageCallback = useCallback(
+    (message: GameMessage): ThreadMessageLike => {
+      return {
+        role: message.role,
+        content: [{ type: "text", text: message.content }],
+      };
+    },
+    []
+  );
+
+  const addMessage = useMessagesStore((state) => state.addMessage);
+  const messagesFromStore = useMessagesStore((state) =>
+    state.allMessages.get(personId)
+  );
+
+  const [displayMessages, setDisplayMessages] =
+    useState<GameMessage[]>(EMPTY_MESSAGES);
 
   useEffect(() => {
-    const messagesForPerson = allMessages.get(personId) || [];
-    setCurrentThreadMessages(messagesForPerson);
-  }, [personId, allMessages]);
+    setDisplayMessages(messagesFromStore || EMPTY_MESSAGES);
+  }, [messagesFromStore]);
+
+  const [isRunning, setIsRunning] = useState(false);
 
   const onNew = async (message: AppendMessage) => {
     if (message.content[0]?.type !== "text") {
@@ -58,12 +65,7 @@ export function GameRuntimeProvider({
       createdAt: new Date(),
     };
 
-    setAllMessages((prevStore) => {
-      const newStore = new Map(prevStore);
-      const currentMessages = newStore.get(personId) || [];
-      newStore.set(personId, [...currentMessages, newMessage]);
-      return newStore;
-    });
+    addMessage(personId, newMessage);
 
     setIsRunning(true);
 
@@ -84,12 +86,7 @@ export function GameRuntimeProvider({
         createdAt: new Date(),
       };
 
-      setAllMessages((prevStore) => {
-        const newStore = new Map(prevStore);
-        const currentMessages = newStore.get(personId) || [];
-        newStore.set(personId, [...currentMessages, aiResponse]);
-        return newStore;
-      });
+      addMessage(personId, aiResponse);
     } catch (error) {
       console.error("[GameRuntimeProvider] onNew error:", error);
       const errorResponse: GameMessage = {
@@ -99,12 +96,7 @@ export function GameRuntimeProvider({
         createdAt: new Date(),
       };
 
-      setAllMessages((prevStore) => {
-        const newStore = new Map(prevStore);
-        const currentMessages = newStore.get(personId) || [];
-        newStore.set(personId, [...currentMessages, errorResponse]);
-        return newStore;
-      });
+      addMessage(personId, errorResponse);
     } finally {
       setIsRunning(false);
     }
@@ -112,8 +104,8 @@ export function GameRuntimeProvider({
 
   const runtime = useExternalStoreRuntime({
     isRunning,
-    messages: currentThreadMessages,
-    convertMessage,
+    messages: displayMessages,
+    convertMessage: convertMessageCallback,
     onNew,
   });
 
