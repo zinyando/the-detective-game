@@ -7,7 +7,6 @@ import {
   AssistantRuntimeProvider,
 } from "@assistant-ui/react";
 import { useState, ReactNode } from "react";
-import { Person } from "@/components/sidebar/PersonsList";
 
 export interface GameMessage {
   id: string;
@@ -43,17 +42,35 @@ export function GameRuntimeProvider({ children }: { children: ReactNode }) {
     setMessages((currentMessages) => [...currentMessages, newMessage]);
     setIsRunning(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
+      if (!response.ok) {
+        throw new Error(`Network error ${response.status}`);
+      }
+      const data = await response.json();
       const aiResponse: GameMessage = {
         id: crypto.randomUUID(),
-        content: `Response to: ${input}`,
+        content: data.reply || "",
         role: "assistant",
         createdAt: new Date(),
       };
       setMessages((currentMessages) => [...currentMessages, aiResponse]);
+    } catch (error) {
+      console.error("[GameRuntimeProvider] onNew error:", error);
+      const errorResponse: GameMessage = {
+        id: crypto.randomUUID(),
+        content: "Sorry, something went wrong while contacting the assistant.",
+        role: "assistant",
+        createdAt: new Date(),
+      };
+      setMessages((currentMessages) => [...currentMessages, errorResponse]);
+    } finally {
       setIsRunning(false);
-    }, 1000);
+    }
   };
 
   const runtime = useExternalStoreRuntime({
