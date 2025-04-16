@@ -6,116 +6,22 @@ import {
   useThreadRuntime,
 } from "@assistant-ui/react";
 import type { FC } from "react";
-import { SendHorizontalIcon, ArrowDownIcon, PencilIcon, CopyIcon, CheckIcon } from "lucide-react";
+import {
+  SendHorizontalIcon,
+  ArrowDownIcon,
+  PencilIcon,
+  CopyIcon,
+  CheckIcon,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 
-import { Person } from "../sidebar/PersonsList";
-import { useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
-import type { ThreadMessageLike, TextContentPart, AppendMessage } from "@assistant-ui/react";
-import { useExternalStoreRuntime } from "@assistant-ui/react";
+import { useState, ChangeEvent, KeyboardEvent } from "react";
+import type { TextContentPart } from "@assistant-ui/react";
 
-interface ThreadProps {
-  person: Person | null;
-}
-
-interface GameMessage {
-  role: "user" | "assistant";
-  content: string;
-}
-
-export const Thread: FC<ThreadProps> = ({ person }) => {
-  const [messages, setMessages] = useState<GameMessage[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
-
-  useExternalStoreRuntime<GameMessage>({
-    isRunning,
-    messages,
-    convertMessage: (message: GameMessage): ThreadMessageLike => ({
-      role: message.role,
-      content: [{ type: "text", text: message.content } as TextContentPart],
-    }),
-    onNew: async (message: AppendMessage) => {
-      console.log("[onNew] Triggered with message:", JSON.stringify(message, null, 2));
-      if (message.content[0]?.type === "text") {
-        const userText = message.content[0].text;
-        console.log("[onNew] User text:", userText);
-        const newMessage: GameMessage = {
-          role: "user",
-          content: userText,
-        };
-        setMessages(prev => {
-          const updatedMessages = [...prev, newMessage];
-          console.log("[onNew] Updated messages with user message:", JSON.stringify(updatedMessages, null, 2));
-          return updatedMessages;
-        });
-        setIsRunning(true);
-
-        // Send message to API
-        try {
-          console.log("[onNew] Sending to API:", userText);
-          const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ message: userText }),
-          });
-          console.log("[onNew] API response status:", response.status);
-
-          if (!response.ok) {
-            throw new Error(`Network response was not ok (${response.status})`);
-          }
-
-          const data = await response.json();
-          console.log("[onNew] API response data:", JSON.stringify(data, null, 2));
-
-          const aiResponse: GameMessage = {
-            role: "assistant",
-            content: data?.reply || "Sorry, I couldn't get a response.",
-          };
-          setMessages(prev => {
-            const updatedMessages = [...prev, aiResponse];
-            console.log("[onNew] Updated messages with AI response:", JSON.stringify(updatedMessages, null, 2));
-            return updatedMessages;
-          });
-
-        } catch (error) {
-          console.error("[onNew] API fetch error:", error);
-          const errorResponse: GameMessage = {
-            role: "assistant",
-            content: "Sorry, something went wrong while contacting the assistant.",
-          };
-          setMessages(prev => {
-            const updatedMessages = [...prev, errorResponse];
-            console.log("[onNew] Updated messages with error response:", JSON.stringify(updatedMessages, null, 2));
-            return updatedMessages;
-          });
-        } finally {
-          setIsRunning(false);
-          console.log("[onNew] Finished processing.");
-        }
-      } else {
-        console.log("[onNew] Message content is not text, skipping processing.");
-      }
-    },
-  });
-
-  useEffect(() => {
-    // Clear messages when the person changes
-    setMessages([]);
-    // Optionally, fetch initial messages or show a welcome message
-    // For now, let's just clear the state
-  }, [person]);
-
-  useEffect(() => {
-    if (person) {
-      console.log("Thread rendering for person:", person);
-    }
-  }, [person]);
-
+export const Thread: FC = () => {
   return (
     <ThreadPrimitive.Root
       className="bg-zinc-900 box-border flex h-full flex-col overflow-hidden"
@@ -188,7 +94,7 @@ const Composer: FC = () => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
@@ -236,8 +142,6 @@ const UserMessage: FC = () => {
   );
 };
 
-
-
 const EditComposer: FC = () => {
   const [editMessage, setEditMessage] = useState("");
 
@@ -248,7 +152,7 @@ const EditComposer: FC = () => {
   };
 
   const handleEditKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleEditSubmit();
     }
@@ -256,18 +160,20 @@ const EditComposer: FC = () => {
 
   return (
     <ComposerPrimitive.Root className="bg-zinc-800 my-4 flex w-full max-w-[var(--thread-max-width)] flex-col gap-2 rounded-xl p-4">
-      <ComposerPrimitive.Input 
+      <ComposerPrimitive.Input
         value={editMessage}
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setEditMessage(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+          setEditMessage(e.target.value)
+        }
         onKeyDown={handleEditKeyDown}
         placeholder="Edit your message..."
-        className="text-zinc-200 flex min-h-[40px] w-full resize-none bg-transparent outline-none" 
+        className="text-zinc-200 flex min-h-[40px] w-full resize-none bg-transparent outline-none"
       />
 
       <div className="flex items-center justify-between mt-2">
         <ComposerPrimitive.Cancel asChild>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="text-zinc-300 hover:text-zinc-100"
             onClick={() => setEditMessage("")}
           >
@@ -275,7 +181,7 @@ const EditComposer: FC = () => {
           </Button>
         </ComposerPrimitive.Cancel>
         <ComposerPrimitive.Send asChild>
-          <Button 
+          <Button
             className="bg-amber-500 text-zinc-900 hover:bg-amber-600 flex items-center gap-2"
             onClick={handleEditSubmit}
             disabled={!editMessage.trim()}

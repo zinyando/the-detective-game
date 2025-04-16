@@ -1,5 +1,5 @@
 import { Thread } from "@/components/assistant-ui/thread";
-
+import { GameRuntimeProvider } from "@/components/providers/game-runtime";
 import { Person } from "../sidebar/PersonsList";
 
 interface InterviewSectionProps {
@@ -7,9 +7,19 @@ interface InterviewSectionProps {
 }
 
 export function InterviewSection({ selectedPerson }: InterviewSectionProps) {
+  if (!selectedPerson) {
+    return (
+      <div className="detective-assistant-ui h-full w-full flex flex-col bg-zinc-900 items-center justify-center">
+        <p className="text-zinc-500">Select a person to start the interview.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="detective-assistant-ui h-full w-full flex flex-col bg-zinc-900">
-      <Thread person={selectedPerson} />
+      <GameRuntimeProvider key={selectedPerson.id}>
+        <Thread />
+      </GameRuntimeProvider>
     </div>
   );
 }
