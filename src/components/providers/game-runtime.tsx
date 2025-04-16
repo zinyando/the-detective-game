@@ -71,7 +71,7 @@ export function GameRuntimeProvider({
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: input, personId: personId }),
       });
       if (!response.ok) {
         throw new Error(`Network error ${response.status}`);
