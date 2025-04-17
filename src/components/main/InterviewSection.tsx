@@ -16,7 +16,7 @@ export function InterviewSection({ selectedPerson }: InterviewSectionProps) {
   }
 
   return (
-    <div className="detective-assistant-ui h-full w-full flex flex-col bg-zinc-900">
+    <div className="detective-assistant-ui h-full w-full flex flex-col bg-zinc-900 relative overflow-hidden">
       <GameRuntimeProvider personId={selectedPerson.id}>
         <Thread />
       </GameRuntimeProvider>
