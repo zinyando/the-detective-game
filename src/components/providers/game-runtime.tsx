@@ -87,7 +87,6 @@ export function GameRuntimeProvider({
         .pipeThrough(new TextDecoderStream())
         .getReader();
 
-      // Create a single message ID that we'll reuse for all updates
       const messageId = crypto.randomUUID();
       const baseMessage: GameMessage = {
         id: messageId,
@@ -96,7 +95,6 @@ export function GameRuntimeProvider({
         createdAt: new Date(),
       };
 
-      // Add initial empty message
       addMessage(personId, baseMessage);
 
       try {
@@ -106,16 +104,15 @@ export function GameRuntimeProvider({
           const { value, done } = await reader.read();
           if (done) break;
 
-          const lines = value.split("\n").filter(line => line.trim());
+          const lines = value.split("\n").filter((line) => line.trim());
           for (const line of lines) {
             if (line.startsWith("0:")) {
               try {
                 const content = JSON.parse(line.substring(2));
                 accumulatedContent += content;
-                // Update message with accumulated content
                 addMessage(personId, {
                   ...baseMessage,
-                  content: accumulatedContent
+                  content: accumulatedContent,
                 });
               } catch {}
             }
