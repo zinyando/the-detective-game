@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { useEffect, useState, useCallback } from "react";
 import { GameIntroModal } from "../components/GameIntroModal";
 import { getGameState, startNewGame } from "../services/gameStateService";
@@ -17,7 +18,7 @@ import {
   fetchLocations,
 } from "../services/gameService";
 
-export default function ModernNoirUI() {
+function ModernNoirUI() {
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [playerName, setPlayerName] = useState<string>("");
   const [showSidebar, setShowSidebar] = useState(true);
@@ -260,5 +261,13 @@ export default function ModernNoirUI() {
         <CaseNotes />
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen bg-zinc-900 text-zinc-300">Loading...</div>}>
+      <ModernNoirUI />
+    </Suspense>
   );
 }
