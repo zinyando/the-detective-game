@@ -1,5 +1,10 @@
+import { Mastra } from "@mastra/core";
+import {
+  sarahReynoldsAgent,
+  marcusChenAgent,
+  dianaWilkinsAgent,
+} from "./agents";
 
-import { Mastra } from '@mastra/core';
-
-export const mastra = new Mastra()
-        
+export const mastra = new Mastra({
+  agents: { sarahReynoldsAgent, marcusChenAgent, dianaWilkinsAgent },
+});
