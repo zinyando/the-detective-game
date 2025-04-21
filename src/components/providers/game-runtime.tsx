@@ -78,15 +78,55 @@ export function GameRuntimeProvider({
       if (!response.ok) {
         throw new Error(`Network error ${response.status}`);
       }
-      const data = await response.json();
-      const aiResponse: GameMessage = {
-        id: crypto.randomUUID(),
-        content: data.reply || "",
+
+      if (!response.body) {
+        throw new Error("Response has no body");
+      }
+
+      const reader = response.body
+        .pipeThrough(new TextDecoderStream())
+        .getReader();
+
+      // Create a single message ID that we'll reuse for all updates
+      const messageId = crypto.randomUUID();
+      const baseMessage: GameMessage = {
+        id: messageId,
+        content: "",
         role: "assistant",
         createdAt: new Date(),
       };
 
-      addMessage(personId, aiResponse);
+      // Add initial empty message
+      addMessage(personId, baseMessage);
+
+      try {
+        let accumulatedContent = "";
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          const lines = value.split("\n").filter(line => line.trim());
+          for (const line of lines) {
+            if (line.startsWith("0:")) {
+              try {
+                const content = JSON.parse(line.substring(2));
+                accumulatedContent += content;
+                // Update message with accumulated content
+                addMessage(personId, {
+                  ...baseMessage,
+                  content: accumulatedContent
+                });
+              } catch {}
+            }
+            if (line.startsWith("e:") || line.startsWith("d:")) {
+              return;
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
     } catch (error) {
       console.error("[GameRuntimeProvider] onNew error:", error);
       const errorResponse: GameMessage = {

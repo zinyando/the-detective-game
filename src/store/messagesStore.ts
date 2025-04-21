@@ -29,7 +29,19 @@ export const useMessagesStore = create<MessagesState>()(
         set((state) => {
           const newStore = new Map(state.allMessages);
           const currentMessages = newStore.get(personId) || [];
-          newStore.set(personId, [...currentMessages, message]);
+          const existingIndex = currentMessages.findIndex(
+            (m) => m.id === message.id
+          );
+
+          let updatedMessages;
+          if (existingIndex >= 0) {
+            updatedMessages = [...currentMessages];
+            updatedMessages[existingIndex] = message;
+          } else {
+            updatedMessages = [...currentMessages, message];
+          }
+
+          newStore.set(personId, updatedMessages);
           return { allMessages: newStore };
         });
       },
