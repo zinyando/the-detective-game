@@ -2,6 +2,8 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
+import { GameIntroModal } from "../components/GameIntroModal";
+import { getGameState, startNewGame } from "../services/gameStateService";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/sidebar/Sidebar";
 import { MainContent } from "../components/main/MainContent";
@@ -16,15 +18,20 @@ import {
 } from "../services/gameService";
 
 export default function ModernNoirUI() {
+  const [showIntroModal, setShowIntroModal] = useState(false);
+  const [playerName, setPlayerName] = useState<string>("");
   const [showSidebar, setShowSidebar] = useState(true);
   const [selectedTab, setSelectedTab] = useState(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       if (params.has("evidence")) return "evidence";
       if (params.has("location")) return "locations";
-      if (params.has("notes")) return "notes";
+      if (params.has("case")) return "case";
       if (params.has("person")) return "interview";
     }
+    // Check if this is a new game
+    const gameState = getGameState();
+    if (!gameState) return "case";
     return "interview";
   });
 
@@ -36,7 +43,7 @@ export default function ModernNoirUI() {
     params.delete("evidence");
     params.delete("location");
     params.delete("person");
-    params.delete("notes");
+    params.delete("case");
 
     // Set the appropriate parameter based on the selected tab
     switch (tab) {
@@ -64,13 +71,13 @@ export default function ModernNoirUI() {
           updateSelectedPerson(selectedPerson, false);
         }
         break;
-      case "notes":
+      case "case":
         // Clear all selections without triggering their update callbacks
         setSelectedPerson(null);
         setSelectedEvidence(null);
         setSelectedLocation(null);
         // Set only the notes parameter
-        params.set("notes", "true");
+        params.set("case", "true");
         router.push(`?${params.toString()}`);
         break;
     }
@@ -133,6 +140,16 @@ export default function ModernNoirUI() {
   );
 
   useEffect(() => {
+    // Check if this is a new game
+    const gameState = getGameState();
+    if (!gameState) {
+      setShowIntroModal(true);
+    } else {
+      setPlayerName(gameState.playerName);
+    }
+  }, []);
+
+  useEffect(() => {
     const loadData = async () => {
       const [personsData, evidenceData, locationsData] = await Promise.all([
         fetchPersons(),
@@ -145,16 +162,19 @@ export default function ModernNoirUI() {
       setLocations(locationsData);
 
       // Handle default case (no params) or person tab
-      const hasAnyParam = ["person", "evidence", "location", "notes"].some(param => 
-        searchParams.has(param)
+      const hasAnyParam = ["person", "evidence", "location", "case"].some(
+        (param) => searchParams.has(param)
       );
 
-      if (personsData.length > 0 && (!hasAnyParam || searchParams.has("person"))) {
+      if (
+        personsData.length > 0 &&
+        (!hasAnyParam || searchParams.has("person"))
+      ) {
         const personId = searchParams.get("person");
         const person = personId
           ? personsData.find((p) => p.id === personId)
           : personsData[0];
-        
+
         if (!hasAnyParam) {
           // If no parameters, set interview tab with first person
           setSelectedTab("interview");
@@ -192,12 +212,28 @@ export default function ModernNoirUI() {
     updateSelectedPerson,
     updateSelectedEvidence,
     updateSelectedLocation,
-    router
+    router,
   ]);
 
   return (
     <div className="flex flex-col h-screen bg-zinc-900 text-zinc-300 font-sans">
-      <Header showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+      <GameIntroModal
+        isOpen={showIntroModal}
+        onClose={(name) => {
+          setPlayerName(name);
+          startNewGame(name);
+          setShowIntroModal(false);
+          setSelectedTab("case");
+          const params = new URLSearchParams();
+          params.set("case", "true");
+          router.push(`?${params.toString()}`);
+        }}
+      />
+      <Header
+        showSidebar={showSidebar}
+        setShowSidebar={setShowSidebar}
+        playerName={playerName}
+      />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
           showSidebar={showSidebar}

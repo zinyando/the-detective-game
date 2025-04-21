@@ -6,7 +6,7 @@ interface TabsProps {
 export function Tabs({ selectedTab, setSelectedTab }: TabsProps) {
   return (
     <div className="flex border-b border-zinc-800">
-      {["interview", "evidence", "locations", "notes"].map((tab) => (
+      {["interview", "evidence", "locations", "case"].map((tab) => (
         <button
           key={tab}
           className={`px-4 py-3 text-sm ${

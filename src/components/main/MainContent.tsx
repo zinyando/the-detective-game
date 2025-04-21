@@ -27,14 +27,16 @@ export function MainContent({
   return (
     <div className="flex-1 flex flex-col bg-zinc-900">
       <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-      {selectedTab === "interview" && <InterviewSection selectedPerson={selectedPerson} />}
+      {selectedTab === "interview" && (
+        <InterviewSection selectedPerson={selectedPerson} />
+      )}
       {selectedTab === "evidence" && (
         <EvidenceView evidence={selectedEvidence} />
       )}
       {selectedTab === "locations" && (
         <LocationView location={selectedLocation} />
       )}
-      {selectedTab === "notes" && <NotesView />}
+      {selectedTab === "case" && <NotesView />}
     </div>
   );
 }
