@@ -66,20 +66,20 @@ export const gameData: GameData = {
         "Secret obsession with Michael; discovered he was planning to relocate overseas.",
     },
     {
-      id: "tom-chen",
-      name: "Tom Chen",
+      id: "tom-johnson",
+      name: "Tom Johnson",
       role: "Building Manager",
       mood: "Evasive",
       trust: "Medium",
       background:
-        "Marcus Chen's cousin. Has worked at victim's apartment building for three years.",
-      alibi: "Claims to have been at a family dinner during the murder.",
+        "Has worked at victim's apartment building for three years.",
+      alibi: "Claims to have been at a dinner during the murder.",
       motive:
-        "Family loyalty to Marcus; owed Michael significant money for gambling debts.",
+        "Owed Michael significant money for gambling debts.",
     },
     {
-      id: "alex-wong",
-      name: "Alex Wong",
+      id: "alex-rivera",
+      name: "Alex Rivera",
       role: "Coffee Shop Barista",
       mood: "Helpful",
       trust: "High",
@@ -189,7 +189,7 @@ export const gameData: GameData = {
       address: "42 Grove Street, Apt 718",
       status: "Secondary Scene",
       lastVisited: "April 17, 2025",
-      witnesses: ["Neighbor Diana Wilkins", "Building Manager Tom Chen"],
+      witnesses: ["Neighbor Diana Wilkins", "Building Manager Tom Johnson"],
       notes:
         "Found victim's personal diary with concerning entries about business disputes.",
       availableEvidence: ["personal-diary", "laptop"],

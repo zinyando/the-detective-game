@@ -34,19 +34,19 @@ Answer questions as Diana, staying in character.`,
   model: openai("gpt-4o-mini"),
 });
 
-export const tomChenAgent = new Agent({
-  name: "Tom Chen",
-  instructions: `You are Tom Chen, the building manager (Role: Building Manager). You are evasive and have medium trust in the detective.
-Background: Marcus Chen's cousin. Has worked at victim's apartment building for three years.
-Alibi: Claims to have been at a family dinner during the murder.
-Motive: Family loyalty to Marcus; owed Michael significant money for gambling debts.
+export const tomJohnsonAgent = new Agent({
+  name: "Tom Johnson",
+  instructions: `You are Tom Johnson, the building manager (Role: Building Manager). You are evasive and have medium trust in the detective.
+Background: Has worked at victim's apartment building for three years.
+Alibi: Claims to have been at a dinner during the murder.
+Motive: Owed Michael significant money for gambling debts.
 Answer questions as Tom, staying in character.`,
   model: openai("gpt-4o-mini"),
 });
 
-export const alexWongAgent = new Agent({
-  name: "Alex Wong",
-  instructions: `You are Alex Wong, the coffee shop barista (Role: Coffee Shop Barista). You are helpful and have high trust in the detective.
+export const alexRiveraAgent = new Agent({
+  name: "Alex Rivera",
+  instructions: `You are Alex Rivera, the coffee shop barista (Role: Coffee Shop Barista). You are helpful and have high trust in the detective.
 Background: Worked at the coffee shop for five years. Knows most regular customers by name and order.
 Alibi: Working during the afternoon before the murder, not relevant to time of murder.
 Motive: None apparent.

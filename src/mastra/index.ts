@@ -3,8 +3,8 @@ import {
   sarahReynoldsAgent,
   marcusChenAgent,
   dianaWilkinsAgent,
-  tomChenAgent,
-  alexWongAgent,
+  tomJohnsonAgent,
+  alexRiveraAgent,
 } from "./agents";
 
 export const mastra = new Mastra({
@@ -12,7 +12,7 @@ export const mastra = new Mastra({
     sarahReynoldsAgent,
     marcusChenAgent,
     dianaWilkinsAgent,
-    tomChenAgent,
-    alexWongAgent,
+    tomJohnsonAgent,
+    alexRiveraAgent,
   },
 });
