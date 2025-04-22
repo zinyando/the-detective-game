@@ -1,6 +1,6 @@
 "use client";
 
-
+import { useRouter } from "next/navigation";
 
 interface GameIntroModalProps {
   isOpen: boolean;
@@ -8,7 +8,14 @@ interface GameIntroModalProps {
 }
 
 export function GameIntroModal({ isOpen, onClose }: GameIntroModalProps) {
+  const router = useRouter();
+
   if (!isOpen) return null;
+
+  const handleBeginInvestigation = () => {
+    onClose();
+    router.push("?tab=case");
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -45,7 +52,7 @@ export function GameIntroModal({ isOpen, onClose }: GameIntroModalProps) {
         <div className="space-y-4 mt-6">
           <div className="mt-8">
             <button
-              onClick={onClose}
+              onClick={handleBeginInvestigation}
               className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black font-medium rounded-md transition-colors"
             >
               Begin Investigation
