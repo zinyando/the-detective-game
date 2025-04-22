@@ -6,6 +6,9 @@ export interface Person {
   role: string;
   mood?: string;
   trust?: string;
+  background: string;
+  alibi: string;
+  motive: string;
 }
 
 

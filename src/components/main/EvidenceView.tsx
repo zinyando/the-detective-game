@@ -17,7 +17,9 @@ export function EvidenceView({ evidence }: EvidenceViewProps) {
   return (
     <div className="flex-1 flex flex-col p-6">
       <div className="mb-8">
-        <h2 className="text-2xl font-medium text-zinc-100 mb-2">{evidence.title}</h2>
+        <h2 className="text-2xl font-medium text-zinc-100 mb-2">
+          {evidence.title}
+        </h2>
         <div className="text-sm text-zinc-400">{evidence.description}</div>
       </div>
 
@@ -25,7 +27,9 @@ export function EvidenceView({ evidence }: EvidenceViewProps) {
         <div className="flex items-start mb-6">
           <FileText className="text-amber-500 mt-1 mr-3" size={20} />
           <div>
-            <div className="text-sm font-medium text-zinc-300 mb-2">Details</div>
+            <div className="text-sm font-medium text-zinc-300 mb-2">
+              Details
+            </div>
             <div className="text-sm text-zinc-400">{evidence.details}</div>
           </div>
         </div>
@@ -33,7 +37,9 @@ export function EvidenceView({ evidence }: EvidenceViewProps) {
         <div className="flex items-center mb-4">
           <Calendar className="text-amber-500 mr-3" size={20} />
           <div>
-            <div className="text-sm font-medium text-zinc-300 mb-1">Date Found</div>
+            <div className="text-sm font-medium text-zinc-300 mb-1">
+              Date Found
+            </div>
             <div className="text-sm text-zinc-400">{evidence.dateFound}</div>
           </div>
         </div>
@@ -41,19 +47,12 @@ export function EvidenceView({ evidence }: EvidenceViewProps) {
         <div className="flex items-center">
           <MapPin className="text-amber-500 mr-3" size={20} />
           <div>
-            <div className="text-sm font-medium text-zinc-300 mb-1">Location</div>
+            <div className="text-sm font-medium text-zinc-300 mb-1">
+              Location
+            </div>
             <div className="text-sm text-zinc-400">{evidence.location}</div>
           </div>
         </div>
-      </div>
-
-      <div className="flex gap-2">
-        <button className="bg-zinc-800 text-zinc-300 px-4 py-2 rounded-md text-sm hover:bg-zinc-700">
-          Add to Case Notes
-        </button>
-        <button className="bg-zinc-800 text-zinc-300 px-4 py-2 rounded-md text-sm hover:bg-zinc-700">
-          Share with Team
-        </button>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ export interface Location {
   lastVisited: string;
   witnesses: string[];
   notes: string;
+  availableEvidence: string[];
+  description: string;
 }
 
 

@@ -5,6 +5,8 @@ export interface Evidence {
   details: string;
   dateFound: string;
   location: string;
+  importance: string;
+  veracity: string;
 }
 
 

@@ -17,7 +17,9 @@ export function LocationView({ location }: LocationViewProps) {
   return (
     <div className="flex-1 flex flex-col p-6">
       <div className="mb-8">
-        <h2 className="text-2xl font-medium text-zinc-100 mb-2">{location.name}</h2>
+        <h2 className="text-2xl font-medium text-zinc-100 mb-2">
+          {location.name}
+        </h2>
         <div className="text-sm text-zinc-400">{location.address}</div>
       </div>
 
@@ -33,7 +35,9 @@ export function LocationView({ location }: LocationViewProps) {
         <div className="flex items-center mb-4">
           <Clock className="text-amber-500 mr-3" size={20} />
           <div>
-            <div className="text-sm font-medium text-zinc-300 mb-1">Last Visited</div>
+            <div className="text-sm font-medium text-zinc-300 mb-1">
+              Last Visited
+            </div>
             <div className="text-sm text-zinc-400">{location.lastVisited}</div>
           </div>
         </div>
@@ -41,8 +45,12 @@ export function LocationView({ location }: LocationViewProps) {
         <div className="flex items-center mb-4">
           <Users className="text-amber-500 mr-3" size={20} />
           <div>
-            <div className="text-sm font-medium text-zinc-300 mb-1">Key Witnesses</div>
-            <div className="text-sm text-zinc-400">{location.witnesses.join(", ")}</div>
+            <div className="text-sm font-medium text-zinc-300 mb-1">
+              Key Witnesses
+            </div>
+            <div className="text-sm text-zinc-400">
+              {location.witnesses.join(", ")}
+            </div>
           </div>
         </div>
 
@@ -53,15 +61,6 @@ export function LocationView({ location }: LocationViewProps) {
             <div className="text-sm text-zinc-400">{location.notes}</div>
           </div>
         </div>
-      </div>
-
-      <div className="flex gap-2">
-        <button className="bg-zinc-800 text-zinc-300 px-4 py-2 rounded-md text-sm hover:bg-zinc-700">
-          Schedule Visit
-        </button>
-        <button className="bg-zinc-800 text-zinc-300 px-4 py-2 rounded-md text-sm hover:bg-zinc-700">
-          Add to Case Notes
-        </button>
       </div>
     </div>
   );

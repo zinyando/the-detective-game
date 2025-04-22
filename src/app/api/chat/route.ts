@@ -2,6 +2,8 @@ import {
   sarahReynoldsAgent,
   marcusChenAgent,
   dianaWilkinsAgent,
+  tomChenAgent,
+  alexWongAgent,
 } from "@/mastra/agents";
 
 export const runtime = "nodejs";
@@ -29,6 +31,10 @@ export async function POST(req: Request) {
     streamResult = await marcusChenAgent.stream(message);
   } else if (personId === "diana-wilkins") {
     streamResult = await dianaWilkinsAgent.stream(message);
+  } else if (personId === "tom-chen") {
+    streamResult = await tomChenAgent.stream(message);
+  } else if (personId === "alex-wong") {
+    streamResult = await alexWongAgent.stream(message);
   } else {
     return new Response("Invalid personId", { status: 400 });
   }
