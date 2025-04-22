@@ -1,15 +1,18 @@
 import { FileText, Calendar, MapPin } from "lucide-react";
 import { Evidence } from "../sidebar/EvidenceList";
+import { EvidenceOverview } from "./EvidenceOverview";
 
 interface EvidenceViewProps {
   evidence: Evidence | null;
+  evidenceList: Evidence[];
+  onSelectEvidence: (evidence: Evidence) => void;
 }
 
-export function EvidenceView({ evidence }: EvidenceViewProps) {
+export function EvidenceView({ evidence, evidenceList, onSelectEvidence }: EvidenceViewProps) {
   if (!evidence) {
     return (
-      <div className="flex-1 flex items-center justify-center text-zinc-500">
-        Select evidence from the sidebar to view details
+      <div className="detective-assistant-ui h-full w-full flex flex-col bg-zinc-900 overflow-auto">
+        <EvidenceOverview evidence={evidenceList} onSelectEvidence={onSelectEvidence} />
       </div>
     );
   }

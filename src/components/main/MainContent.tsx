@@ -15,6 +15,12 @@ interface MainContentProps {
   selectedEvidence: Evidence | null;
   selectedLocation: Location | null;
   selectedPerson: Person | null;
+  persons: Person[];
+  evidence: Evidence[];
+  locations: Location[];
+  onSelectPerson: (person: Person) => void;
+  onSelectEvidence: (evidence: Evidence) => void;
+  onSelectLocation: (location: Location) => void;
 }
 
 export function MainContent({
@@ -23,18 +29,36 @@ export function MainContent({
   selectedEvidence,
   selectedLocation,
   selectedPerson,
+  persons,
+  evidence,
+  locations,
+  onSelectPerson,
+  onSelectEvidence,
+  onSelectLocation,
 }: MainContentProps) {
   return (
     <div className="flex-1 flex flex-col bg-zinc-900">
       <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
       {selectedTab === "interview" && (
-        <InterviewSection selectedPerson={selectedPerson} />
+        <InterviewSection
+          selectedPerson={selectedPerson}
+          persons={persons}
+          onSelectPerson={onSelectPerson}
+        />
       )}
       {selectedTab === "evidence" && (
-        <EvidenceView evidence={selectedEvidence} />
+        <EvidenceView
+          evidence={selectedEvidence}
+          evidenceList={evidence}
+          onSelectEvidence={onSelectEvidence}
+        />
       )}
       {selectedTab === "locations" && (
-        <LocationView location={selectedLocation} />
+        <LocationView
+          location={selectedLocation}
+          locations={locations}
+          onSelectLocation={onSelectLocation}
+        />
       )}
       {selectedTab === "case" && <NotesView />}
     </div>

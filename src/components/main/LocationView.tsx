@@ -1,15 +1,18 @@
 import { MapPin, Clock, AlertCircle, Users } from "lucide-react";
 import { Location } from "../sidebar/LocationsList";
+import { LocationsOverview } from "./LocationsOverview";
 
 interface LocationViewProps {
   location: Location | null;
+  locations: Location[];
+  onSelectLocation: (location: Location) => void;
 }
 
-export function LocationView({ location }: LocationViewProps) {
+export function LocationView({ location, locations, onSelectLocation }: LocationViewProps) {
   if (!location) {
     return (
-      <div className="flex-1 flex items-center justify-center text-zinc-500">
-        Select a location from the sidebar to view details
+      <div className="detective-assistant-ui h-full w-full flex flex-col bg-zinc-900 overflow-auto">
+        <LocationsOverview locations={locations} onSelectLocation={onSelectLocation} />
       </div>
     );
   }

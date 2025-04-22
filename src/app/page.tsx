@@ -24,63 +24,27 @@ function ModernNoirUI() {
   const [selectedTab, setSelectedTab] = useState(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      if (params.has("evidence")) return "evidence";
-      if (params.has("location")) return "locations";
-      if (params.has("case")) return "case";
-      if (params.has("person")) return "interview";
+      const tab = params.get("tab");
+      if (tab && ["interview", "evidence", "locations", "case"].includes(tab)) {
+        return tab;
+      }
     }
-    // Check if this is a new game
-    const gameState = getGameState();
-    if (!gameState) return "case";
+    // Default to interview tab
     return "interview";
   });
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
-    const params = new URLSearchParams(searchParams.toString());
+    
+    // Clear selections when switching tabs
+    setSelectedPerson(null);
+    setSelectedEvidence(null);
+    setSelectedLocation(null);
 
-    // Clear existing tab parameters
-    params.delete("evidence");
-    params.delete("location");
-    params.delete("person");
-    params.delete("case");
-
-    // Set the appropriate parameter based on the selected tab
-    switch (tab) {
-      case "evidence":
-        if (evidence.length > 0) {
-          const selectedEvidence = evidence[0];
-          params.set("evidence", selectedEvidence.id);
-          router.push(`?${params.toString()}`);
-          updateSelectedEvidence(selectedEvidence, false);
-        }
-        break;
-      case "locations":
-        if (locations.length > 0) {
-          const selectedLocation = locations[0];
-          params.set("location", selectedLocation.id);
-          router.push(`?${params.toString()}`);
-          updateSelectedLocation(selectedLocation, false);
-        }
-        break;
-      case "interview":
-        if (persons.length > 0) {
-          const selectedPerson = persons[0];
-          params.set("person", selectedPerson.id);
-          router.push(`?${params.toString()}`);
-          updateSelectedPerson(selectedPerson, false);
-        }
-        break;
-      case "case":
-        // Clear all selections without triggering their update callbacks
-        setSelectedPerson(null);
-        setSelectedEvidence(null);
-        setSelectedLocation(null);
-        // Set only the notes parameter
-        params.set("case", "true");
-        router.push(`?${params.toString()}`);
-        break;
-    }
+    // Update URL with just the tab parameter
+    const params = new URLSearchParams();
+    params.set("tab", tab);
+    router.push(`?${params.toString()}`);
   };
 
   const [persons, setPersons] = useState<Person[]>([]);
@@ -159,57 +123,46 @@ function ModernNoirUI() {
       setEvidence(evidenceData);
       setLocations(locationsData);
 
-      // Handle default case (no params) or person tab
-      const hasAnyParam = ["person", "evidence", "location", "case"].some(
-        (param) => searchParams.has(param)
-      );
+      // Get the current tab from URL or default to interview
+      const tab = searchParams.get("tab") || "interview";
+      setSelectedTab(tab);
 
-      if (
-        personsData.length > 0 &&
-        (!hasAnyParam || searchParams.has("person"))
-      ) {
+      // Handle item selection based on URL parameters
+      if (tab === "interview" && searchParams.has("person")) {
         const personId = searchParams.get("person");
         const person = personId
           ? personsData.find((p) => p.id === personId)
-          : personsData[0];
-
-        if (!hasAnyParam) {
-          // If no parameters, set interview tab with first person
-          setSelectedTab("interview");
-          const params = new URLSearchParams();
-          params.set("person", personsData[0].id);
-          router.push(`?${params.toString()}`);
-        } else {
-          // Otherwise just update the selected person
-          updateSelectedPerson(person || personsData[0]);
+          : null;
+        if (person) {
+          setSelectedPerson(person);
         }
-      }
-
-      // Set initial selected evidence only if on evidence tab
-      if (evidenceData.length > 0 && searchParams.has("evidence")) {
+      } else if (tab === "evidence" && searchParams.has("evidence")) {
         const evidenceId = searchParams.get("evidence");
         const evidence = evidenceId
           ? evidenceData.find((e) => e.id === evidenceId)
-          : evidenceData[0];
-        updateSelectedEvidence(evidence || evidenceData[0]);
-      }
-
-      // Set initial selected location only if on locations tab
-      if (locationsData.length > 0 && searchParams.has("location")) {
+          : null;
+        if (evidence) {
+          setSelectedEvidence(evidence);
+        }
+      } else if (tab === "locations" && searchParams.has("location")) {
         const locationId = searchParams.get("location");
         const location = locationId
           ? locationsData.find((l) => l.id === locationId)
-          : locationsData[0];
-        updateSelectedLocation(location || locationsData[0]);
+          : null;
+        if (location) {
+          setSelectedLocation(location);
+        }
       }
+
+      // Update URL with the current tab
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("tab", tab);
+      router.push(`?${params.toString()}`);
     };
 
     loadData();
   }, [
     searchParams,
-    updateSelectedPerson,
-    updateSelectedEvidence,
-    updateSelectedLocation,
     router,
   ]);
 
@@ -248,6 +201,12 @@ function ModernNoirUI() {
           selectedEvidence={selectedEvidence}
           selectedLocation={selectedLocation}
           selectedPerson={selectedPerson}
+          persons={persons}
+          evidence={evidence}
+          locations={locations}
+          onSelectPerson={updateSelectedPerson}
+          onSelectEvidence={updateSelectedEvidence}
+          onSelectLocation={updateSelectedLocation}
         />
 
         <CaseNotes />

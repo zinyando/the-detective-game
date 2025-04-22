@@ -5,17 +5,21 @@ import { useState } from "react";
 import { CharacterDetailsModal } from "./CharacterDetailsModal";
 import Image from "next/image";
 import { User } from "lucide-react";
+import { PersonsOverview } from "./PersonsOverview";
 
 interface InterviewSectionProps {
   selectedPerson: Person | null;
+  persons: Person[];
+  onSelectPerson: (person: Person) => void;
 }
 
-export function InterviewSection({ selectedPerson }: InterviewSectionProps) {
+export function InterviewSection({ selectedPerson, persons, onSelectPerson }: InterviewSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   if (!selectedPerson) {
     return (
-      <div className="detective-assistant-ui h-full w-full flex flex-col bg-zinc-900 items-center justify-center">
-        <p className="text-zinc-500">Select a person to start the interview.</p>
+      <div className="detective-assistant-ui h-full w-full flex flex-col bg-zinc-900 overflow-auto">
+        <PersonsOverview persons={persons} onSelectPerson={onSelectPerson} />
       </div>
     );
   }
