@@ -3,7 +3,6 @@ import {
   ComposerPrimitive,
   MessagePrimitive,
   ThreadPrimitive,
-  useThreadRuntime,
 } from "@assistant-ui/react";
 import type { FC } from "react";
 import {
@@ -19,7 +18,6 @@ import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 
 import { useState, ChangeEvent, KeyboardEvent } from "react";
-import type { TextContentPart } from "@assistant-ui/react";
 
 export const Thread: FC = () => {
   return (
@@ -78,54 +76,35 @@ const ThreadWelcome: FC = () => {
   );
 };
 
-interface ComposerActionProps {
-  onSubmit: () => void;
-}
-
 const Composer: FC = () => {
-  const [message, setMessage] = useState("");
-  const runtime = useThreadRuntime();
-
-  const handleSubmit = () => {
-    if (!message.trim()) return;
-    runtime.append({
-      role: "user",
-      content: [{ type: "text", text: message } as TextContentPart],
-    });
-    setMessage("");
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
-
   return (
-    <ComposerPrimitive.Root className="focus-within:border-amber-500/20 flex w-full flex-wrap items-end rounded-lg bg-zinc-800 px-2.5 shadow-sm transition-colors ease-in">
+    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full flex-wrap items-end rounded-lg border bg-inherit px-2.5 shadow-sm transition-colors ease-in">
       <ComposerPrimitive.Input
         rows={1}
-        className="flex-1 bg-transparent p-2.5 text-sm text-zinc-200 outline-none"
+        autoFocus
         placeholder="Write a message..."
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={handleKeyDown}
+        className="placeholder:text-muted-foreground max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
       />
-      <ComposerAction onSubmit={handleSubmit} />
+      <ComposerAction />
     </ComposerPrimitive.Root>
   );
 };
 
-const ComposerAction: FC<ComposerActionProps> = ({ onSubmit }) => {
+const ComposerAction: FC = () => {
   return (
-    <button
-      type="submit"
-      onClick={onSubmit}
-      className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-700 text-zinc-200 hover:bg-zinc-600"
-    >
-      <SendHorizontalIcon className="h-4 w-4" />
-    </button>
+    <>
+      <ThreadPrimitive.If running={false}>
+        <ComposerPrimitive.Send asChild>
+          <TooltipIconButton
+            tooltip="Send"
+            variant="default"
+            className="my-2.5 size-8 p-2 transition-opacity ease-in bg-zinc-700 text-zinc-200 hover:bg-zinc-600"
+          >
+            <SendHorizontalIcon />
+          </TooltipIconButton>
+        </ComposerPrimitive.Send>
+      </ThreadPrimitive.If>
+    </>
   );
 };
 
