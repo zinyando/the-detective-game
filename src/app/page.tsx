@@ -154,10 +154,7 @@ function ModernNoirUI() {
         }
       }
 
-      // Update URL with the current tab
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("tab", tab);
-      router.push(`?${params.toString()}`);
+      // URL is already updated by handleTabChange
     };
 
     loadData();
@@ -173,10 +170,7 @@ function ModernNoirUI() {
         onClose={() => {
           startNewGame();
           setShowIntroModal(false);
-          setSelectedTab("case");
-          const params = new URLSearchParams();
-          params.set("case", "true");
-          router.push(`?${params.toString()}`);
+          handleTabChange("case");
         }}
       />
       <Header showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
