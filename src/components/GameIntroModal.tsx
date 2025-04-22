@@ -1,25 +1,14 @@
 "use client";
 
-import { useState } from 'react';
+
 
 interface GameIntroModalProps {
   isOpen: boolean;
-  onClose: (playerName: string) => void;
+  onClose: () => void;
 }
 
 export function GameIntroModal({ isOpen, onClose }: GameIntroModalProps) {
-  const [playerName, setPlayerName] = useState('');
-  const [error, setError] = useState('');
-
   if (!isOpen) return null;
-
-  const handleSubmit = () => {
-    if (!playerName.trim()) {
-      setError('Please enter your name');
-      return;
-    }
-    onClose(playerName.trim());
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -54,28 +43,10 @@ export function GameIntroModal({ isOpen, onClose }: GameIntroModalProps) {
         </div>
 
         <div className="space-y-4 mt-6">
-          <div className="space-y-2">
-            <label htmlFor="playerName" className="block text-sm font-medium text-zinc-300">
-              Detective Name
-            </label>
-            <input
-              type="text"
-              id="playerName"
-              value={playerName}
-              onChange={(e) => {
-                setPlayerName(e.target.value);
-                setError('');
-              }}
-              className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-md text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              placeholder="Enter your name"
-            />
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-          </div>
-
-          <div className="flex justify-end">
+          <div className="mt-8">
             <button
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-amber-500 text-zinc-900 rounded hover:bg-amber-400 transition-colors font-medium"
+              onClick={onClose}
+              className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black font-medium rounded-md transition-colors"
             >
               Begin Investigation
             </button>

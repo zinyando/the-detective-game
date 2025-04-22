@@ -20,7 +20,6 @@ import {
 
 function ModernNoirUI() {
   const [showIntroModal, setShowIntroModal] = useState(false);
-  const [playerName, setPlayerName] = useState<string>("");
   const [showSidebar, setShowSidebar] = useState(true);
   const [selectedTab, setSelectedTab] = useState(() => {
     if (typeof window !== "undefined") {
@@ -145,8 +144,6 @@ function ModernNoirUI() {
     const gameState = getGameState();
     if (!gameState) {
       setShowIntroModal(true);
-    } else {
-      setPlayerName(gameState.playerName);
     }
   }, []);
 
@@ -220,9 +217,8 @@ function ModernNoirUI() {
     <div className="flex flex-col h-screen bg-zinc-900 text-zinc-300 font-sans">
       <GameIntroModal
         isOpen={showIntroModal}
-        onClose={(name) => {
-          setPlayerName(name);
-          startNewGame(name);
+        onClose={() => {
+          startNewGame();
           setShowIntroModal(false);
           setSelectedTab("case");
           const params = new URLSearchParams();
@@ -230,11 +226,7 @@ function ModernNoirUI() {
           router.push(`?${params.toString()}`);
         }}
       />
-      <Header
-        showSidebar={showSidebar}
-        setShowSidebar={setShowSidebar}
-        playerName={playerName}
-      />
+      <Header showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
           showSidebar={showSidebar}
@@ -266,7 +258,13 @@ function ModernNoirUI() {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-screen bg-zinc-900 text-zinc-300">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen bg-zinc-900 text-zinc-300">
+          Loading...
+        </div>
+      }
+    >
       <ModernNoirUI />
     </Suspense>
   );

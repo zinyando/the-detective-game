@@ -1,6 +1,5 @@
 interface GameState {
   isNewGame: boolean;
-  playerName: string;
 }
 
 const GAME_STATE_KEY = 'detective_game_state';
@@ -18,9 +17,8 @@ export function saveGameState(state: GameState): void {
   localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
 }
 
-export function startNewGame(playerName: string): void {
+export function startNewGame(): void {
   saveGameState({
-    isNewGame: false,
-    playerName
+    isNewGame: false
   });
 }
