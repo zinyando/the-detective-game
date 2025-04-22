@@ -19,19 +19,18 @@ import {
 } from "../services/gameService";
 
 function ModernNoirUI() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
-  const [selectedTab, setSelectedTab] = useState(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const tab = params.get("tab");
-      if (tab && ["interview", "evidence", "locations", "case"].includes(tab)) {
-        return tab;
-      }
+  const [selectedTab, setSelectedTab] = useState("interview");
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && ["interview", "evidence", "locations", "case"].includes(tab)) {
+      setSelectedTab(tab);
     }
-    // Default to interview tab
-    return "interview";
-  });
+  }, [searchParams]);
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
@@ -57,8 +56,6 @@ function ModernNoirUI() {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
   );
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   const updateSelectedPerson = useCallback(
