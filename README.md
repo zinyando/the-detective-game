@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Detective Game
+
+**Made with [Mastra](https://mastra.ai) - The TypeScript Agent Framework **
+
+## Overview
+
+The Detective Game is an immersive murder mystery investigation game where players take on the role of a detective investigating the murder of Marcus Chen, CEO of TechVision Solutions. Built with modern web technologies and powered by Mastra's AI capabilities, this game offers a unique and engaging detective experience.
+
+### Key Features
+
+- 🔍 **Interactive Investigation**: Interview suspects, examine evidence, and visit key locations
+- 📝 **Case Notes**: Keep track of your findings and theories
+- 🎯 **Multiple Investigation Modes**: Switch between different aspects of the case
+- 🎨 **Modern Noir UI**: Sleek, dark-themed interface for an authentic detective experience
+
+### Technology Stack
+
+- Next.js 15 with App Router
+- TypeScript
+- Tailwind CSS
+- Mastra
 
 ## Getting Started
 
-First, run the development server:
+To run the game locally:
 
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Start the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Game Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/` - Next.js app router pages and layouts
+- `components/` - React components organized by feature
+  - `main/` - Main game interface components
+  - `sidebar/` - Navigation and list components
+  - `assistant-ui/` - AI assistant interface components
+- `services/` - Game state and data management
+- `data/` - Game content and scenarios
 
-## Learn More
+## Contributing
 
-To learn more about Next.js, take a look at the following resources:
+This project is open for contributions! If you'd like to help improve The Detective Game:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
+MIT License - See [LICENSE](LICENSE) for details.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with 🎮 using [Mastra](https://mastra.ai) - The TypeScript Agent Framework
