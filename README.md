@@ -1,6 +1,6 @@
 # The Detective Game
 
-**Made with [Mastra](https://mastra.ai) - The TypeScript Agent Framework **
+**Game AI powered by [Mastra](https://mastra.ai) - The TypeScript Agent Framework**
 
 ## Overview
 

@@ -26,7 +26,7 @@ export function Header({ showSidebar, setShowSidebar }: HeaderProps) {
         rel="noopener noreferrer"
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-800/50 hover:bg-zinc-700/50 text-zinc-400 hover:text-zinc-100 text-sm font-medium transition-all duration-200 border border-zinc-700/50 hover:border-zinc-600/50 group"
       >
-        Made with
+        Game AI powered by
         <span className="bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent font-semibold group-hover:from-amber-400 group-hover:to-amber-200 transition-all duration-200">
           Mastra
         </span>
