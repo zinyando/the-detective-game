@@ -52,7 +52,7 @@ export const gameData: GameData = {
         "Claims to have been working late at a different office, but security footage contradicts this statement.",
       motive:
         "Would gain full control of company patents; recently discovered Michael was having an affair with his wife.",
-      profileImage: "https://i.pravatar.cc/150?img=12",
+      profileImage: "/chen-image.png",
     },
     {
       id: "diana-wilkins",
@@ -74,11 +74,9 @@ export const gameData: GameData = {
       role: "Building Manager",
       mood: "Evasive",
       trust: "Medium",
-      background:
-        "Has worked at victim's apartment building for three years.",
+      background: "Has worked at victim's apartment building for three years.",
       alibi: "Claims to have been at a dinner during the murder.",
-      motive:
-        "Owed Michael significant money for gambling debts.",
+      motive: "Owed Michael significant money for gambling debts.",
       profileImage: "https://i.pravatar.cc/150?img=53",
     },
     {
@@ -92,7 +90,7 @@ export const gameData: GameData = {
       alibi:
         "Working during the afternoon before the murder, not relevant to time of murder.",
       motive: "None apparent.",
-      profileImage: "https://i.pravatar.cc/150?img=68",
+      profileImage: "/rivera-image.png",
     },
   ],
   evidence: [

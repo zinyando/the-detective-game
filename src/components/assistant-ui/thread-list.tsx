@@ -59,7 +59,7 @@ const ThreadListItem: FC<ThreadListItemProps> = ({ person, isSelected, onSelect 
           alt={person.name}
           width={40}
           height={40}
-          className="object-cover"
+          className="object-cover w-full h-full"
           onError={() => {
             const fallback = (
               <div className="w-full h-full flex items-center justify-center">

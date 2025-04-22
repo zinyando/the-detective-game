@@ -35,7 +35,7 @@ export function InterviewSection({ selectedPerson, persons, onSelectPerson }: In
               alt={selectedPerson.name}
               width={40}
               height={40}
-              className="object-cover"
+              className="object-cover w-full h-full"
               onError={() => {
                 const fallback = (
                   <div className="w-full h-full flex items-center justify-center">

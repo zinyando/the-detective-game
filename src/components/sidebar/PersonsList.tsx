@@ -46,7 +46,7 @@ export function PersonsList({
                 alt={person.name}
                 width={32}
                 height={32}
-                className="object-cover"
+                className="object-cover w-full h-full"
                 onError={() => {
                   const fallback = (
                     <div className="w-full h-full flex items-center justify-center">

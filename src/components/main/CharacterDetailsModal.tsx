@@ -29,7 +29,7 @@ export function CharacterDetailsModal({ person, isOpen, onClose }: CharacterDeta
                 alt={person.name}
                 width={64}
                 height={64}
-                className="object-cover"
+                className="object-cover w-full h-full"
                 onError={() => {
                   const fallback = (
                     <div className="w-full h-full flex items-center justify-center">
