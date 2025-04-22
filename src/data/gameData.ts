@@ -38,6 +38,7 @@ export const gameData: GameData = {
       alibi: "Claims to have been at home alone during the time of murder.",
       motive:
         "Financial gain from insurance policy; would inherit Michael's shares in the company.",
+      profileImage: "https://i.pravatar.cc/150?img=47",
     },
     {
       id: "marcus-chen",
@@ -51,6 +52,7 @@ export const gameData: GameData = {
         "Claims to have been working late at a different office, but security footage contradicts this statement.",
       motive:
         "Would gain full control of company patents; recently discovered Michael was having an affair with his wife.",
+      profileImage: "https://i.pravatar.cc/150?img=12",
     },
     {
       id: "diana-wilkins",
@@ -64,6 +66,7 @@ export const gameData: GameData = {
         "Claims to have been home watching TV. Neighbor across hall confirms hearing her TV, but didn't actually see her.",
       motive:
         "Secret obsession with Michael; discovered he was planning to relocate overseas.",
+      profileImage: "https://i.pravatar.cc/150?img=45",
     },
     {
       id: "tom-johnson",
@@ -76,6 +79,7 @@ export const gameData: GameData = {
       alibi: "Claims to have been at a dinner during the murder.",
       motive:
         "Owed Michael significant money for gambling debts.",
+      profileImage: "https://i.pravatar.cc/150?img=53",
     },
     {
       id: "alex-rivera",
@@ -88,6 +92,7 @@ export const gameData: GameData = {
       alibi:
         "Working during the afternoon before the murder, not relevant to time of murder.",
       motive: "None apparent.",
+      profileImage: "https://i.pravatar.cc/150?img=68",
     },
   ],
   evidence: [

@@ -1,4 +1,6 @@
 import { Person } from "../sidebar/PersonsList";
+import Image from "next/image";
+import { User } from "lucide-react";
 
 interface CharacterDetailsModalProps {
   person: Person;
@@ -20,9 +22,28 @@ export function CharacterDetailsModal({ person, isOpen, onClose }: CharacterDeta
     >
       <div className="bg-zinc-800 w-full sm:rounded-lg shadow-xl sm:max-w-2xl h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 flex justify-between items-start p-3 sm:p-4 border-b border-zinc-700 bg-zinc-800/95 backdrop-blur-sm z-10">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold text-amber-400">{person.name}</h2>
-            <p className="text-zinc-100 text-xs sm:text-sm">{person.role}</p>
+          <div className="flex items-center gap-4">
+            <div className="relative w-16 h-16 bg-zinc-700 rounded-full overflow-hidden flex-shrink-0">
+              <Image
+                src={person.profileImage}
+                alt={person.name}
+                width={64}
+                height={64}
+                className="object-cover"
+                onError={() => {
+                  const fallback = (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <User size={24} />
+                    </div>
+                  );
+                  return fallback;
+                }}
+              />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-amber-400">{person.name}</h2>
+              <p className="text-zinc-100 text-xs sm:text-sm">{person.role}</p>
+            </div>
           </div>
           <button
             onClick={onClose}

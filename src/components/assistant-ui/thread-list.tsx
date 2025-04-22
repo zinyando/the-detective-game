@@ -1,5 +1,7 @@
 import type { FC } from "react";
 import { Person } from "../sidebar/PersonsList";
+import Image from "next/image";
+import { User } from "lucide-react";
 
 interface ThreadListProps {
   persons: Person[];
@@ -49,12 +51,29 @@ const ThreadListItem: FC<ThreadListItemProps> = ({ person, isSelected, onSelect 
   return (
     <button
       onClick={onSelect}
-      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-left hover:bg-zinc-800 ${isSelected ? 'bg-zinc-800' : ''}`}
+      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-left hover:bg-zinc-800 ${isSelected ? 'bg-zinc-800' : ''}`}
     >
-      <div className="flex-1">
+      <div className="relative w-10 h-10 bg-zinc-700 rounded-full overflow-hidden flex-shrink-0">
+        <Image
+          src={person.profileImage}
+          alt={person.name}
+          width={40}
+          height={40}
+          className="object-cover"
+          onError={() => {
+            const fallback = (
+              <div className="w-full h-full flex items-center justify-center">
+                <User size={16} />
+              </div>
+            );
+            return fallback;
+          }}
+        />
+      </div>
+      <div className="flex-1 min-w-0">
         <ThreadListItemTitle name={person.name} />
         {person.role && (
-          <p className="text-xs text-zinc-500">{person.role}</p>
+          <p className="text-xs text-zinc-500 truncate">{person.role}</p>
         )}
       </div>
     </button>

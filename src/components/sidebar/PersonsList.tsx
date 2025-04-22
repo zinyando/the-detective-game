@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { User } from "lucide-react";
 
 export interface Person {
@@ -9,9 +10,8 @@ export interface Person {
   background: string;
   alibi: string;
   motive: string;
+  profileImage: string;
 }
-
-
 
 interface PersonsListProps {
   persons: Person[];
@@ -19,7 +19,11 @@ interface PersonsListProps {
   onSelectPerson: (person: Person) => void;
 }
 
-export function PersonsList({ persons, selectedPerson, onSelectPerson }: PersonsListProps) {
+export function PersonsList({
+  persons,
+  selectedPerson,
+  onSelectPerson,
+}: PersonsListProps) {
   return (
     <div className="mb-6">
       <div className="mb-2 text-xs tracking-wider font-bold text-zinc-500 border-b border-zinc-800 pb-1">
@@ -36,8 +40,22 @@ export function PersonsList({ persons, selectedPerson, onSelectPerson }: Persons
                 : "hover:bg-zinc-800"
             } rounded cursor-pointer`}
           >
-            <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center">
-              <User size={14} />
+            <div className="relative w-8 h-8 bg-zinc-700 rounded-full overflow-hidden">
+              <Image
+                src={person.profileImage}
+                alt={person.name}
+                width={32}
+                height={32}
+                className="object-cover"
+                onError={() => {
+                  const fallback = (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <User size={14} />
+                    </div>
+                  );
+                  return fallback;
+                }}
+              />
             </div>
             <div className="ml-2">
               <div>{person.name}</div>
