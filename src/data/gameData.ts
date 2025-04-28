@@ -77,7 +77,7 @@ export const gameData: GameData = {
       background: "Has worked at victim's apartment building for three years.",
       alibi: "Claims to have been at a dinner during the murder.",
       motive: "Owed Michael significant money for gambling debts.",
-      profileImage: "https://i.pravatar.cc/150?img=53",
+      profileImage: "/tom-image.png",
     },
     {
       id: "alex-rivera",
